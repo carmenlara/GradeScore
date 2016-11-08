@@ -53,7 +53,7 @@ public:
 	CListCtrl m_overview;
 
 	// Hilfsmethoden
-
+	afx_msg void LoadDBInList();
 
 	// Events
 	afx_msg void OnNMClickOverview(NMHDR *pNMHDR, LRESULT *pResult);

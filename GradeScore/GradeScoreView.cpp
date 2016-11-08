@@ -63,18 +63,26 @@ void CGradeScoreView::OnInitialUpdate()
 	GetParentFrame()->RecalcLayout();
 	ResizeParentToFit();
 
+	LVCOLUMN lvColumn;
+	CImageList il;
+
 	m_db = new CDatabase();
 	m_db->OpenEx("DSN=GradeScore;SERVER=localhost;UID=postgres;PWD={As2016sql_5};", FALSE);
-
-	/*CRecordset *rec = new CRecordset(m_db);
-	CString query = "Select * FROM test;";
-	rec->Open(CRecordset::snapshot, query);
-	if (rec->IsOpen())
-	{
-		CString xy;
-		rec->GetFieldValue("spalte", xy);
-	}*/
 	
+	// Tabellenraster
+	lvColumn.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH;
+	lvColumn.fmt = LVCFMT_LEFT;
+	lvColumn.cx = 250;
+	lvColumn.pszText = _T("Beschriftung");
+	m_overview.InsertColumn(0, &lvColumn);
+	m_overview.InsertColumn(1, _T("Jahr"), LVCFMT_LEFT, 80);
+	m_overview.InsertColumn(2, _T("Semester"), LVCFMT_LEFT, 150);
+	il.Create(24, 24, ILC_COLOR4, 10, 10);
+	m_overview.SetImageList(&il, LVSIL_SMALL);
+	this->m_overview.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES | LVS_EX_ONECLICKACTIVATE
+		| LVS_EX_AUTOSIZECOLUMNS | LVS_EX_JUSTIFYCOLUMNS);
+
+	LoadDBInList();
 }
 
 
@@ -101,6 +109,33 @@ CGradeScoreDoc* CGradeScoreView::GetDocument() const // Nichtdebugversion ist in
 
 // CGradeScoreView-Meldungshandler
 
+
+void CGradeScoreView::LoadDBInList()
+{
+	CRecordset *rec = new CRecordset (m_db);
+	CString id, beschriftung, jahr, semester, query;
+	int i = 0;
+	int countItems = 0;
+	query = "SELECT * FROM semester;";
+	rec->Open(CRecordset::snapshot, query, NULL);
+	countItems = rec->GetRecordCount();
+	for (i = 0; i < countItems; i++)
+	{
+		rec->GetFieldValue("sem_id", id);
+		rec->GetFieldValue("beschriftung", beschriftung);
+		rec->GetFieldValue("jahr", jahr);
+		rec->GetFieldValue("semester", semester);
+
+		m_overview.InsertItem(i, "");
+		m_overview.SetItemText(i, 0, beschriftung);
+		m_overview.SetItemText(i, 1, jahr);
+		m_overview.SetItemText(i, 2, semester);
+		m_overview.SetItemData(i, (DWORD)_ttoi(id));
+	}
+	rec->Close();
+}
+
+
 // Click on Overview List Control
 void CGradeScoreView::OnNMClickOverview(NMHDR *pNMHDR, LRESULT *pResult)
 {
@@ -124,13 +159,13 @@ void CGradeScoreView::OnNMDblclkOverview(NMHDR *pNMHDR, LRESULT *pResult)
 void CGradeScoreView::OnBnClickedAddSemester()
 {
 	CAddSemester dlg;
-	CRecordset *rec = new CRecordset (m_db);
 	CString query, semester, jahr;
+	int countLine = m_overview.GetItemCount();
 	if (dlg.DoModal())
 	{
-		jahr.Format("%d", dlg.m_jahr);
 		if (dlg.m_okClicked)
 		{
+			jahr.Format("%d", dlg.m_jahr);
 			if (dlg.m_semesterNr == 0)
 			{
 				semester = "1";
@@ -139,19 +174,16 @@ void CGradeScoreView::OnBnClickedAddSemester()
 			{
 				semester = "2";
 			}
-			query = "";
+			try
+			{
+				m_db->ExecuteSQL("INSERT INTO semester (beschriftung, jahr, semester) VALUES ('" + dlg.m_beschriftung + "', " + jahr + ", " + semester + ");");
+			}
+			catch (CDBException *e)
+			{
+				MessageBox("Das Semester konnte nicht erfasst werden.", "Error", MB_ICONERROR);
+			}
 		}
 	}
-
-
-	/*CRecordset *rec = new CRecordset(m_db);
-	CString query = "Select * FROM test;";
-	rec->Open(CRecordset::snapshot, query);
-	if (rec->IsOpen())
-	{
-	CString xy;
-	rec->GetFieldValue("spalte", xy);
-	}*/
 }
 
 
