@@ -17,7 +17,7 @@
 #undef APSTUDIO_READONLY_SYMBOLS
 
 /////////////////////////////////////////////////////////////////////////////
-// Deutsch (Deutschland) resources
+// German (Germany) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DEU)
 LANGUAGE LANG_GERMAN, SUBLANG_GERMAN
@@ -344,12 +344,12 @@ BEGIN
     AFX_IDS_SCTASKLIST      "Aktiviert die Aufgabenliste."
 END
 
-#endif    // Deutsch (Deutschland) resources
+#endif    // German (Germany) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
 /////////////////////////////////////////////////////////////////////////////
-// Deutsch (Schweiz) resources
+// German (Switzerland) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_DES)
 LANGUAGE LANG_GERMAN, SUBLANG_GERMAN_SWISS
@@ -375,6 +375,75 @@ BEGIN
     LTEXT           "Semester:",IDC_STATIC,198,22,34,8
 END
 
+IDD_MENU DIALOGEX 0, 0, 522, 251
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Menu"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,411,230,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,465,230,50,14
+    CONTROL         "",IDC_MODULE,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,7,69,508,133
+    CTEXT           "Aktuelles Schuljahr 2016 Semester 2 \nBeschreibung: Seeland Gymnasium \nGesammtnote : 5",IDC_INFO_SEMESTER_JAHR_TEXT_GESAMMTNOTE,25,20,429,28
+    PUSHBUTTON      "Semester wechseln",IDC_SEMESTER_WECHSELN,426,43,82,20
+    PUSHBUTTON      "Fach hinzufügen",IDC_FACH_HINZUFUEGEN,7,202,70,14
+    PUSHBUTTON      "Fach entfernen",IDC_FACH_ENTFERNEN,79,202,66,14
+    PUSHBUTTON      "Grafische Ansicht",IDC_GRAFISCHE_ANSICHT,410,206,105,21
+END
+
+IDD_FACH_HINZUFUEGEN DIALOGEX 0, 0, 214, 77
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Fach Hinzugfügen"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,106,56,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,157,56,50,14
+    EDITTEXT        IDC_FACH_BEZEICHNUNG,7,29,198,14,ES_AUTOHSCROLL
+    LTEXT           "Fach Bezeichnung",IDC_STATIC_FACH_BEZEICHNUNG,7,14,59,8
+END
+
+IDD_DETAIL_ANSICHT DIALOGEX 0, 0, 310, 178
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Detail Ansicht"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,199,157,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,253,157,50,14
+    CONTROL         "",IDC_NOTEN_UEBERSICHT,"SysListView32",LVS_REPORT | LVS_ALIGNLEFT | WS_BORDER | WS_TABSTOP,7,39,296,92
+    LTEXT           "Notendetails: Mathematik",IDC_NOTEN_DETAILS,7,27,84,8
+    PUSHBUTTON      "Note Hinzufügen",IDC_NOTE_HINZUFUEGEN,162,23,70,14
+    PUSHBUTTON      "Note Entfernen",IDC_NOTE_ENTFERNEN,236,23,67,14
+    PUSHBUTTON      "Menu",IDC_MENU,216,135,87,17
+END
+
+IDD_NOTE_HINZUFUEGEN DIALOGEX 0, 0, 313, 95
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Note Hinzufügen"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,202,74,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,256,74,50,14
+    EDITTEXT        IDC_EDIT1,7,67,130,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT2,7,28,40,14,ES_AUTOHSCROLL
+    EDITTEXT        IDC_EDIT3,93,28,40,14,ES_AUTOHSCROLL
+    CONTROL         "",IDC_DATETIMEPICKER1,"SysDateTimePick32",DTS_RIGHTALIGN | WS_TABSTOP,207,28,77,14
+    LTEXT           "Text (Optional)",IDC_STATIC,7,57,50,8
+    LTEXT           "Note",IDC_STATIC,7,19,16,8
+    LTEXT           "Gewichtung in %",IDC_STATIC,93,19,56,8
+    LTEXT           "Datum",IDC_STATIC,207,19,22,8
+END
+
+IDD_GRAFIK DIALOGEX 0, 0, 310, 178
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Grafik"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,199,157,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,253,157,50,14
+    CONTROL         "",IDC_GRAFIK,"Static",SS_BLACKFRAME,7,38,296,97
+    LTEXT           "Grafik Gesammtübersicht",IDC_STATIC_GESAMMTUEBERSICHT,7,26,83,8
+    PUSHBUTTON      "Menu",IDC_MENU,204,137,99,17
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -393,6 +462,46 @@ BEGIN
         HORZGUIDE, 29
         HORZGUIDE, 48
     END
+
+    IDD_MENU, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 515
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 244
+    END
+
+    IDD_FACH_HINZUFUEGEN, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 207
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 70
+    END
+
+    IDD_DETAIL_ANSICHT, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 303
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 171
+    END
+
+    IDD_NOTE_HINZUFUEGEN, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 306
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 88
+    END
+
+    IDD_GRAFIK, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 303
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 171
+    END
 END
 #endif    // APSTUDIO_INVOKED
 
@@ -403,6 +512,31 @@ END
 //
 
 IDD_SEMESTER_ADD AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_MENU AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_FACH_HINZUFUEGEN AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_DETAIL_ANSICHT AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_NOTE_HINZUFUEGEN AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+IDD_GRAFIK AFX_DIALOG_LAYOUT
 BEGIN
     0
 END
@@ -460,7 +594,7 @@ BEGIN
     0
 END
 
-#endif    // Deutsch (Schweiz) resources
+#endif    // German (Switzerland) resources
 /////////////////////////////////////////////////////////////////////////////
 
 

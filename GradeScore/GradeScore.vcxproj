@@ -194,20 +194,30 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AddSemester.h" />
+    <ClInclude Include="DetailAnsicht.h" />
+    <ClInclude Include="FachHinzufuegen.h" />
     <ClInclude Include="GradeScore.h" />
     <ClInclude Include="GradeScoreDoc.h" />
     <ClInclude Include="GradeScoreView.h" />
+    <ClInclude Include="Grafik.h" />
     <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="MenuDlg.h" />
+    <ClInclude Include="NoteHinzufuegen.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AddSemester.cpp" />
+    <ClCompile Include="DetailAnsicht.cpp" />
+    <ClCompile Include="FachHinzufuegen.cpp" />
     <ClCompile Include="GradeScore.cpp" />
     <ClCompile Include="GradeScoreDoc.cpp" />
     <ClCompile Include="GradeScoreView.cpp" />
+    <ClCompile Include="Grafik.cpp" />
     <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="MenuDlg.cpp" />
+    <ClCompile Include="NoteHinzufuegen.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
