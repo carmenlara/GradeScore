@@ -11,6 +11,7 @@
 
 #include "GradeScoreDoc.h"
 #include "GradeScoreView.h"
+#include "AddSemester.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -62,9 +63,10 @@ void CGradeScoreView::OnInitialUpdate()
 	GetParentFrame()->RecalcLayout();
 	ResizeParentToFit();
 
-	/*m_db = new CDatabase();
+	m_db = new CDatabase();
 	m_db->OpenEx("DSN=GradeScore;SERVER=localhost;UID=postgres;PWD={As2016sql_5};", FALSE);
-	CRecordset *rec = new CRecordset(m_db);
+
+	/*CRecordset *rec = new CRecordset(m_db);
 	CString query = "Select * FROM test;";
 	rec->Open(CRecordset::snapshot, query);
 	if (rec->IsOpen())
@@ -121,7 +123,35 @@ void CGradeScoreView::OnNMDblclkOverview(NMHDR *pNMHDR, LRESULT *pResult)
 // Button Semester hinzufügen
 void CGradeScoreView::OnBnClickedAddSemester()
 {
-	// TODO: Fügen Sie hier Ihren Kontrollbehandlungscode für die Benachrichtigung ein.
+	CAddSemester dlg;
+	CRecordset *rec = new CRecordset (m_db);
+	CString query, semester, jahr;
+	if (dlg.DoModal())
+	{
+		jahr.Format("%d", dlg.m_jahr);
+		if (dlg.m_okClicked)
+		{
+			if (dlg.m_semesterNr == 0)
+			{
+				semester = "1";
+			}
+			else
+			{
+				semester = "2";
+			}
+			query = "";
+		}
+	}
+
+
+	/*CRecordset *rec = new CRecordset(m_db);
+	CString query = "Select * FROM test;";
+	rec->Open(CRecordset::snapshot, query);
+	if (rec->IsOpen())
+	{
+	CString xy;
+	rec->GetFieldValue("spalte", xy);
+	}*/
 }
 
 

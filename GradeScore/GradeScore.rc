@@ -355,6 +355,59 @@ END
 LANGUAGE LANG_GERMAN, SUBLANG_GERMAN_SWISS
 #pragma code_page(1252)
 
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_SEMESTER_ADD DIALOGEX 0, 0, 301, 84
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "Semester hinzufügen"
+FONT 8, "MS Shell Dlg", 400, 0, 0x1
+BEGIN
+    DEFPUSHBUTTON   "OK",IDOK,189,63,50,14
+    PUSHBUTTON      "Abbrechen",IDCANCEL,244,63,50,14
+    EDITTEXT        IDC_BESCHRIFTUNG,20,35,114,14,ES_AUTOHSCROLL
+    LTEXT           "Beschriftung:",IDC_STATIC,21,22,44,8
+    EDITTEXT        IDC_JAHR,145,35,40,14,ES_AUTOHSCROLL
+    LTEXT           "Jahr:",IDC_STATIC,146,22,18,8
+    COMBOBOX        IDC_SEMESTER,197,36,85,61,CBS_DROPDOWN | CBS_SORT | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Semester:",IDC_STATIC,198,22,34,8
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_SEMESTER_ADD, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 294
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 77
+        HORZGUIDE, 29
+        HORZGUIDE, 48
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_SEMESTER_ADD AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -391,6 +444,21 @@ BEGIN
 END
 
 #endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog Info
+//
+
+IDD_SEMESTER_ADD DLGINIT
+BEGIN
+    IDC_SEMESTER, 0x403, 12, 0
+0x2e31, 0x5320, 0x6d65, 0x7365, 0x6574, 0x0072, 
+    IDC_SEMESTER, 0x403, 12, 0
+0x2e32, 0x5320, 0x6d65, 0x7365, 0x6574, 0x0072, 
+    0
+END
 
 #endif    // Deutsch (Schweiz) resources
 /////////////////////////////////////////////////////////////////////////////

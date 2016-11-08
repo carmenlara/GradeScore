@@ -193,6 +193,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AddSemester.h" />
     <ClInclude Include="GradeScore.h" />
     <ClInclude Include="GradeScoreDoc.h" />
     <ClInclude Include="GradeScoreView.h" />
@@ -202,6 +203,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AddSemester.cpp" />
     <ClCompile Include="GradeScore.cpp" />
     <ClCompile Include="GradeScoreDoc.cpp" />
     <ClCompile Include="GradeScoreView.cpp" />
