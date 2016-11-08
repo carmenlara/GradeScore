@@ -13,6 +13,11 @@
 #include "GradeScoreView.h"
 #include "AddSemester.h"
 
+#include <string>
+#include <vector>
+
+using namespace std;
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -125,6 +130,7 @@ void CGradeScoreView::LoadDBInList()
 		rec->GetFieldValue("beschriftung", beschriftung);
 		rec->GetFieldValue("jahr", jahr);
 		rec->GetFieldValue("semester", semester);
+		rec->MoveNext();
 
 		m_overview.InsertItem(i, "");
 		m_overview.SetItemText(i, 0, beschriftung);
@@ -190,7 +196,38 @@ void CGradeScoreView::OnBnClickedAddSemester()
 // Button Semester löschen
 void CGradeScoreView::OnBnClickedDeleteSemester()
 {
-	// TODO: Fügen Sie hier Ihren Kontrollbehandlungscode für die Benachrichtigung ein.
+	CRecordset *rec = new CRecordset(m_db);
+	int i = 0;
+	int id = 0;
+	int countLines = 0;
+	CString idStr, fachid;
+	std::vector <CString> fachIDs;
+	if (m_selectedLine != -1)
+	{
+		id = m_overview.GetItemData(m_selectedLine);
+		idStr.Format("%d", id);
+		rec->Open(CRecordset::snapshot, "SELECT * FROM fach WHERE fk_sem_id = " + idStr, NULL);
+		countLines = rec->GetRecordCount();
+		for (i = 0; i < countLines; i++)
+		{
+			rec->GetFieldValue("fach_id", fachid);
+			rec->MoveNext();
+			fachIDs.push_back(fachid);
+		}
+		rec->Close();
+		
+		for (i = 0; i < fachIDs.size(); i++)
+		{
+			m_db->ExecuteSQL("DELETE FROM note WHERE fk_fach_id = " + fachIDs.at (i));
+		}
+
+		m_db->ExecuteSQL("DELETE FROM fach WHERE fk_sem_id = " + idStr);
+		m_db->ExecuteSQL("DELETE FROM semester WHERE sem_id = " + idStr);
+	}
+	else
+	{
+		MessageBox("Bitte wählen Sie einen Datensatz aus, den Sie löschen möchten.", "Error", MB_ICONERROR);
+	}
 }
 
 
