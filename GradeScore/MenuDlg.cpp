@@ -136,7 +136,50 @@ void CMenuDlg::LoadListCtrl()
 
 double CMenuDlg::GesamtnoteBerechnen(int fachid)
 {
-	return 0;
+	double dRet = 0.0;
+	double dGesamtGewichtung = 0.0;
+	int iOhneGewichtung = 0;
+	struct SNote
+	{
+		double Note;
+		double Fakrot;
+	};
+
+	vector<SNote> vecNoten;
+	for (int i = 0; i < m_faecher.size(); ++i)
+	{
+		SNote xNote;
+		xNote.Note = atof(m_faecher[i]["note"]);
+		xNote.Gewichtung = -1.0;
+		if (!m_faecher[i]["Gewichtung"].empty())
+		{
+			xNote.Gewichtung = atof(m_faecher[i]["Gewichtung"]) / 100.0;
+			dGesamtGewichtung += xNote.Gewichtung;
+		}
+		else
+		{
+			++iOhneGewichtung;
+		}
+		vecNoten.push_back(xNote);
+	}
+
+	double dGewichtungÜbriger = (1.0 - dGesamtGewichtung) / iOhneGewichtung;
+
+	for (int i = 0; i < vecNoten.size(); ++i)
+	{
+		if (vecNoten[i].Gewichtung < 0)
+		{
+			vecNoten[i].Gewichtung = dGewichtungÜbriger;
+			dGesamtGewichtung += dGewichtungÜbriger;
+		}
+	}
+
+	for (int i = 0; i < vecNoten.size(); ++i)
+	{
+		dRet += vecNoten[i].Gewichtung * vecNoten[i].Note / dGesamtGewichtung;
+	}
+
+	return dRet / vecNoten.size();
 }
 
 
