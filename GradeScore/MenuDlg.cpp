@@ -215,7 +215,7 @@ void CMenuDlg::OnBnClickedFachHinzufuegen()
 
 void CMenuDlg::OnBnClickedFachAuswaehlen()
 {
-	// TODO: Fügen Sie hier Ihren Kontrollbehandlungscode für die Benachrichtigung ein.
+	
 }
 
 
