@@ -63,82 +63,44 @@ BOOL CMenuDlg::OnInitDialog()
 
 void CMenuDlg::NotenHolen()
 {
-
-}
-
-
-int CMenuDlg::GesamtnoteBerechnen()
-{
 	CRecordset *rec = new CRecordset(m_db);
-	CString query = "SELECT * FROM fach WHERE fach.\"fk_sem_id\" = " + m_idSemester, idFach, noteStr, gewichtungStr;
+	CString query = "SELECT * FROM fach WHERE fach.\"fk_sem_id\" = " + m_idSemester, idFachStr, noteStr, gewichtungStr;
 	int i = 0;
-	int x = 0;
-	double summeNoten = 0;
-	double gewichtung = 0;
-	int noteGerundet = 0;
-	int summeGewichtung = 0;
-	BOOL hatFachGewichtung = TRUE;
-	std::map <int, std::map <CString, CString>> noten;
+	int fachid = 0;
 	rec->Open(CRecordset::snapshot, query, NULL);
 	while (!rec->IsEOF())
 	{
-		rec->GetFieldValue("fach_id", idFach);
+		rec->GetFieldValue("fach_id", idFachStr);
 		rec->MoveNext();
-		m_fachIDs.push_back(idFach);
+		m_fachIDs.push_back(idFachStr);
 	}
 	rec->Close();
 	for (i = 0; i < m_fachIDs.size(); i++)
 	{
-		noten.clear();
-		x = 0;
-		hatFachGewichtung = TRUE;
-		summeNoten = 0;
-		noteGerundet = 0;
-		summeGewichtung = 0;
+		m_noten.clear();
 		rec->Open(CRecordset::snapshot, "SELECT * FROM noten WHERE noten.\"fk_fach_id\" = " + m_fachIDs.at(i), NULL);
 		while (!rec->IsEOF())
 		{
+			rec->GetFieldValue("fach_id", idFachStr);
 			rec->GetFieldValue("note", noteStr);
 			rec->GetFieldValue("gewichtung", gewichtungStr);
-			noten[x]["note"] = noteStr;
-			noten[x]["gewichtung"] = gewichtungStr;
+			fachid = _ttoi(idFachStr);
+			m_noten[fachid]["note"] = noteStr;
+			m_noten[fachid]["gewichtung"] = gewichtungStr;
 			if (gewichtungStr == "")
 			{
-				hatFachGewichtung = FALSE;
-				noten[x]["gewichtung"] = "0";
+				m_noten[fachid]["gewichtung"] = "0";
 			}
 			rec->MoveNext();
 		}
 		rec->Close();
-		if (hatFachGewichtung)
-		{
-			for (x = 0; x < noten.size(); x++)
-			{
-				summeGewichtung += _ttoi(noten[x]["gewichtung"]);
-			}
-			if (summeGewichtung == 100)
-			{
-				for (x = 0; x < noten.size(); x++)
-				{
-					gewichtung = ((double)_ttoi(noten[x]["gewichtung"])) / 100;
-					summeNoten += gewichtung * atof(noten[x]["note"]);
-				}
-			}
-			else
-			{
-
-			}
-		}
-		else
-		{
-			for (x = 0; x < noten.size(); x++)
-			{
-				summeNoten += _ttoi(noten[x]["note"]);
-			}
-			summeNoten = summeNoten / noten.size();
-		}
-		noteGerundet = int(summeNoten);
 	}
+}
+
+
+int CMenuDlg::GesamtnoteBerechnen(int fachid)
+{
+	return 0;
 }
 
 

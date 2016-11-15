@@ -35,9 +35,10 @@ public:
 	CString m_semester;
 
 	std::vector <CString> m_fachIDs;
+	std::map <int, std::map <CString, CString>> m_noten;
 	std::map <CString, double> m_fachNoten;
 
-	afx_msg int GesamtnoteBerechnen();
+	afx_msg int GesamtnoteBerechnen(int fachid);
 	afx_msg void NotenHolen();
 
 	virtual BOOL OnInitDialog();
