@@ -165,7 +165,7 @@ void CMenuDlg::OnBnClickedSemesterWechseln()
 
 void CMenuDlg::OpenFachAnsicht()
 {
-	int 
+	
 }
 
 
