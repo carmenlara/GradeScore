@@ -54,31 +54,52 @@ BOOL CMenuDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	
+	m_fachList.InsertColumn(0, "Fach", LVCFMT_LEFT, 200);
+	m_fachList.InsertColumn(0, "Note", LVCFMT_RIGHT, 100);
+	m_fachList.InsertColumn(0, "Note gerundet", LVCFMT_RIGHT, 100);
+	m_fachList.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES | LVS_EX_ONECLICKACTIVATE
+		| LVS_EX_AUTOSIZECOLUMNS | LVS_EX_JUSTIFYCOLUMNS);
+
+	FaecherHolen();
+	NotenHolen();
+	LoadListCtrl();
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // AUSNAHME: OCX-Eigenschaftenseite muss FALSE zurückgeben.
 }
 
 
-void CMenuDlg::NotenHolen()
+void CMenuDlg::FaecherHolen()
 {
 	CRecordset *rec = new CRecordset(m_db);
-	CString query = "SELECT * FROM fach WHERE fach.\"fk_sem_id\" = " + m_idSemester, idFachStr, noteStr, gewichtungStr;
+	CString query = "SELECT * FROM fach WHERE fach.\"fk_sem_id\" = " + m_idSemester, idFachStr, fach;
+	int idFach = 0;
 	int i = 0;
-	int fachid = 0;
 	rec->Open(CRecordset::snapshot, query, NULL);
 	while (!rec->IsEOF())
 	{
 		rec->GetFieldValue("fach_id", idFachStr);
+		rec->GetFieldValue("fach", fach);
+		idFach = _ttoi(idFachStr);
+		m_faecher [i] ["id"] = fach;
+		m_faecher [i] ["fach"] = fach;
 		rec->MoveNext();
-		m_fachIDs.push_back(idFachStr);
+		i++;
 	}
 	rec->Close();
-	for (i = 0; i < m_fachIDs.size(); i++)
+}
+
+
+void CMenuDlg::NotenHolen()
+{
+	CRecordset *rec = new CRecordset(m_db);
+	CString idFachStr, noteStr, gewichtungStr;
+	int i = 0;
+	int fachid = 0;
+	for (i = 0; i < m_faecher.size(); i++)
 	{
 		m_noten.clear();
-		rec->Open(CRecordset::snapshot, "SELECT * FROM noten WHERE noten.\"fk_fach_id\" = " + m_fachIDs.at(i), NULL);
+		rec->Open(CRecordset::snapshot, "SELECT * FROM noten WHERE noten.\"fk_fach_id\" = " + m_faecher [i] ["id"], NULL);
 		while (!rec->IsEOF())
 		{
 			rec->GetFieldValue("fach_id", idFachStr);
@@ -87,10 +108,6 @@ void CMenuDlg::NotenHolen()
 			fachid = _ttoi(idFachStr);
 			m_noten[fachid]["note"] = noteStr;
 			m_noten[fachid]["gewichtung"] = gewichtungStr;
-			if (gewichtungStr == "")
-			{
-				m_noten[fachid]["gewichtung"] = "0";
-			}
 			rec->MoveNext();
 		}
 		rec->Close();
@@ -98,7 +115,26 @@ void CMenuDlg::NotenHolen()
 }
 
 
-int CMenuDlg::GesamtnoteBerechnen(int fachid)
+void CMenuDlg::LoadListCtrl()
+{
+	int i = 0;
+	double note = 0.0;
+	CString noteStr, notegerundetStr;
+	for (i = 0; i < m_faecher.size(); i++)
+	{
+		note = GesamtnoteBerechnen(_ttoi(m_faecher[i]["id"]));
+		noteStr.Format("%d", note);
+		notegerundetStr.Format("%d", (int)note);
+		m_fachList.InsertItem(i, m_faecher[i]["fach"]);
+		m_fachList.SetItemText(i, 1, noteStr);
+		m_fachList.SetItemText(i, 1, notegerundetStr);
+		m_fachList.SetItemData(i, (DWORD)_ttoi(m_faecher[i]["id"]));
+	}
+	UpdateData(FALSE);
+}
+
+
+double CMenuDlg::GesamtnoteBerechnen(int fachid)
 {
 	return 0;
 }
@@ -107,7 +143,8 @@ int CMenuDlg::GesamtnoteBerechnen(int fachid)
 void CMenuDlg::OnNMClickModule(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
-	// TODO: Fügen Sie hier Ihren Kontrollbehandlungscode für die Benachrichtigung ein.
+	m_listLine = m_fachList.GetSelectionMark();
+	m_fachList.SetSelectionMark(-1);
 	*pResult = 0;
 }
 
@@ -123,6 +160,12 @@ void CMenuDlg::OnNMDblclkModule(NMHDR *pNMHDR, LRESULT *pResult)
 void CMenuDlg::OnBnClickedSemesterWechseln()
 {
 	// TODO: Fügen Sie hier Ihren Kontrollbehandlungscode für die Benachrichtigung ein.
+}
+
+
+void CMenuDlg::OpenFachAnsicht()
+{
+	int 
 }
 
 
