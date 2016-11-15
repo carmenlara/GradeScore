@@ -32,4 +32,9 @@ protected:
 
 public:
 	int m_fachid;
+	afx_msg void OnBnClickedNoteHinzufuegen();
+	afx_msg void OnBnClickedNoteEntfernen();
+	afx_msg void OnBnClickedMenu();
+	afx_msg void OnBnClickedOk();
+	virtual BOOL OnInitDialog();
 };
