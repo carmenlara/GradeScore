@@ -18,10 +18,6 @@ public:
 	enum { IDD = IDD_DETAIL_ANSICHT };
 #endif
 private:
-
-	// Control Variablen
-	CListCtrl m_overview;
-
 	// Hilfsmethoden
 	afx_msg void LoadData();
 
