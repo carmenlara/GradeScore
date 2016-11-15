@@ -384,8 +384,9 @@ BEGIN
     CTEXT           "Aktuelles Schuljahr 2016 Semester 2 \nBeschreibung: Seeland Gymnasium \nGesammtnote : 5",IDC_INFO_SEMESTER_JAHR_TEXT_GESAMMTNOTE,100,13,315,28
     PUSHBUTTON      "Semester wechseln",IDC_SEMESTER_WECHSELN,426,43,82,20
     PUSHBUTTON      "Fach hinzufügen",IDC_FACH_HINZUFUEGEN,7,202,70,14
-    PUSHBUTTON      "Fach entfernen",IDC_FACH_ENTFERNEN,79,202,66,14
+    PUSHBUTTON      "Fach entfernen",IDC_FACH_ENTFERNEN,155,202,66,14
     PUSHBUTTON      "Grafische Ansicht",IDC_GRAFISCHE_ANSICHT,411,206,105,21
+    PUSHBUTTON      "Fach auswählen",IDC_FACH_AUSWAEHLEN,81,202,70,14
 END
 
 IDD_FACH_HINZUFUEGEN DIALOGEX 0, 0, 214, 77

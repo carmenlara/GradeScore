@@ -42,7 +42,6 @@ public:
 	afx_msg double GesamtnoteBerechnen(int fachid);
 	afx_msg void FaecherHolen();
 	afx_msg void NotenHolen();
-	afx_msg void OpenFachAnsicht();
 	afx_msg void LoadListCtrl();
 
 	virtual BOOL OnInitDialog();
@@ -52,4 +51,5 @@ public:
 	afx_msg void OnBnClickedFachHinzufuegen();
 	afx_msg void OnBnClickedFachEntfernen();
 	afx_msg void OnBnClickedGrafischeAnsicht();
+	afx_msg void OnBnClickedFachAuswaehlen();
 };

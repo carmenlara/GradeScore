@@ -44,6 +44,7 @@ BEGIN_MESSAGE_MAP(CMenuDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_FACH_HINZUFUEGEN, &CMenuDlg::OnBnClickedFachHinzufuegen)
 	ON_BN_CLICKED(IDC_FACH_ENTFERNEN, &CMenuDlg::OnBnClickedFachEntfernen)
 	ON_BN_CLICKED(IDC_GRAFISCHE_ANSICHT, &CMenuDlg::OnBnClickedGrafischeAnsicht)
+	ON_BN_CLICKED(IDC_FACH_AUSWAEHLEN, &CMenuDlg::OnBnClickedFachAuswaehlen)
 END_MESSAGE_MAP()
 
 
@@ -206,13 +207,13 @@ void CMenuDlg::OnBnClickedSemesterWechseln()
 }
 
 
-void CMenuDlg::OpenFachAnsicht()
+void CMenuDlg::OnBnClickedFachHinzufuegen()
 {
-	
+	// TODO: Fügen Sie hier Ihren Kontrollbehandlungscode für die Benachrichtigung ein.
 }
 
 
-void CMenuDlg::OnBnClickedFachHinzufuegen()
+void CMenuDlg::OnBnClickedFachAuswaehlen()
 {
 	// TODO: Fügen Sie hier Ihren Kontrollbehandlungscode für die Benachrichtigung ein.
 }

@@ -120,6 +120,7 @@ void CGradeScoreView::LoadDBInList()
 	CString id, beschriftung, jahr, semester, query;
 	int i = 0;
 	query = "SELECT * FROM semester;";
+	m_overview.DeleteAllItems();
 	rec->Open(CRecordset::snapshot, query, NULL);
 	while (!rec->IsEOF ())
 	{
@@ -153,7 +154,7 @@ void CGradeScoreView::OnNMClickOverview(NMHDR *pNMHDR, LRESULT *pResult)
 void CGradeScoreView::OnNMDblclkOverview(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
-	// TODO: Fügen Sie hier Ihren Kontrollbehandlungscode für die Benachrichtigung ein.
+	OnBnClickedSelectSemester();
 	*pResult = 0;
 }
 
@@ -163,7 +164,6 @@ void CGradeScoreView::OnBnClickedAddSemester()
 {
 	CAddSemester dlg;
 	CString query, semester, jahr;
-	int countLine = m_overview.GetItemCount();
 	if (dlg.DoModal())
 	{
 		if (dlg.m_okClicked)
@@ -180,9 +180,7 @@ void CGradeScoreView::OnBnClickedAddSemester()
 			try
 			{
 				m_db->ExecuteSQL("INSERT INTO semester (beschriftung, jahr, semester) VALUES ('" + dlg.m_beschriftung + "', " + jahr + ", " + semester + ");");
-				m_overview.InsertItem(countLine, dlg.m_beschriftung);
-				m_overview.SetItemText(countLine, 1, jahr);
-				m_overview.SetItemText(countLine, 2, semester + ". Semester");
+				LoadDBInList();
 			}
 			catch (CDBException *e)
 			{

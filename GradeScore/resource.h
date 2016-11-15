@@ -28,6 +28,8 @@
 #define IDC_FACH_ENTFERNEN              1015
 #define IDC_GRAFISCHE_ANSICHT           1016
 #define IDC_FACH_BEZEICHNUNG            1017
+#define IDC_FACH_HINZUFUEGEN2           1017
+#define IDC_FACH_AUSWAEHLEN             1017
 #define IDC_STATIC_FACH_BEZEICHNUNG     1018
 #define IDC_NOTEN_UEBERSICHT            1019
 #define IDC_NOTEN_DETAILS               1020
