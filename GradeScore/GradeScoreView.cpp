@@ -36,6 +36,7 @@ BEGIN_MESSAGE_MAP(CGradeScoreView, CFormView)
 	ON_BN_CLICKED(IDC_ADD_SEMESTER, &CGradeScoreView::OnBnClickedAddSemester)
 	ON_BN_CLICKED(IDC_DELETE_SEMESTER, &CGradeScoreView::OnBnClickedDeleteSemester)
 	ON_BN_CLICKED(IDC_SELECT_SEMESTER, &CGradeScoreView::OnBnClickedSelectSemester)
+	ON_WM_MEASUREITEM()
 END_MESSAGE_MAP()
 
 // CGradeScoreView-Erstellung/Zerstörung
@@ -71,24 +72,19 @@ void CGradeScoreView::OnInitialUpdate()
 	GetParentFrame()->RecalcLayout();
 	ResizeParentToFit();
 
-	LVCOLUMN lvColumn;
 	CImageList il;
-
 	m_db = new CDatabase();
 	m_db->OpenEx("DSN=GradeScore;SERVER=localhost;UID=postgres;PWD={As2016sql_5};", FALSE);
 	
 	// Tabellenraster
-	lvColumn.mask = LVCF_FMT | LVCF_TEXT | LVCF_WIDTH;
-	lvColumn.fmt = LVCFMT_LEFT;
-	lvColumn.cx = 250;
-	lvColumn.pszText = _T("Beschriftung");
-	m_overview.InsertColumn(0, &lvColumn);
+	m_overview.InsertColumn(0, _T("Beschriftung"), LVCFMT_LEFT, 250);
 	m_overview.InsertColumn(1, _T("Jahr"), LVCFMT_LEFT, 80);
 	m_overview.InsertColumn(2, _T("Semester"), LVCFMT_LEFT, 150);
-	il.Create(24, 24, ILC_COLOR4, 10, 10);
-	m_overview.SetImageList(&il, LVSIL_SMALL);
 	this->m_overview.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES | LVS_EX_ONECLICKACTIVATE
 		| LVS_EX_AUTOSIZECOLUMNS | LVS_EX_JUSTIFYCOLUMNS);
+
+	il.Create(1, 25, ILC_COLOR, 1, 1);
+	m_overview.SetImageList(&il, LVSIL_SMALL);
 
 	LoadDBInList();
 }
@@ -123,23 +119,21 @@ void CGradeScoreView::LoadDBInList()
 	CRecordset *rec = new CRecordset (m_db);
 	CString id, beschriftung, jahr, semester, query;
 	int i = 0;
-	int countItems = 0;
 	query = "SELECT * FROM semester;";
 	rec->Open(CRecordset::snapshot, query, NULL);
-	countItems = rec->GetRecordCount();
-	for (i = 0; i < countItems; i++)
+	while (!rec->IsEOF ())
 	{
 		rec->GetFieldValue("sem_id", id);
 		rec->GetFieldValue("beschriftung", beschriftung);
 		rec->GetFieldValue("jahr", jahr);
 		rec->GetFieldValue("semester", semester);
-		rec->MoveNext();
 
-		m_overview.InsertItem(i, "");
-		m_overview.SetItemText(i, 0, beschriftung);
+		m_overview.InsertItem(i, beschriftung);
 		m_overview.SetItemText(i, 1, jahr);
 		m_overview.SetItemText(i, 2, semester);
 		m_overview.SetItemData(i, (DWORD)_ttoi(id));
+		i++;
+		rec->MoveNext();
 	}
 	rec->Close();
 }
@@ -186,6 +180,9 @@ void CGradeScoreView::OnBnClickedAddSemester()
 			try
 			{
 				m_db->ExecuteSQL("INSERT INTO semester (beschriftung, jahr, semester) VALUES ('" + dlg.m_beschriftung + "', " + jahr + ", " + semester + ");");
+				m_overview.InsertItem(countLine, dlg.m_beschriftung);
+				m_overview.SetItemText(countLine, 1, jahr);
+				m_overview.SetItemText(countLine, 2, semester + ". Semester");
 			}
 			catch (CDBException *e)
 			{
@@ -203,29 +200,37 @@ void CGradeScoreView::OnBnClickedDeleteSemester()
 	int i = 0;
 	int id = 0;
 	int countLines = 0;
-	CString idStr, fachid;
+	CString idStr, fachid, beschriftung, jahr, semester;
 	std::vector <CString> fachIDs;
 	if (m_selectedLine != -1)
 	{
-		id = m_overview.GetItemData(m_selectedLine);
-		idStr.Format("%d", id);
-		rec->Open(CRecordset::snapshot, "SELECT * FROM fach WHERE fk_sem_id = " + idStr, NULL);
-		countLines = rec->GetRecordCount();
-		for (i = 0; i < countLines; i++)
+		beschriftung = m_overview.GetItemText(m_selectedLine, 0);
+		jahr = m_overview.GetItemText(m_selectedLine, 1);
+		semester = m_overview.GetItemText(m_selectedLine, 2) + ". Semester";
+		const int result = MessageBox("Möchten Sie \"" + beschriftung + ", " + jahr + ", " + semester + "\" wirklich löschen?", "Semester Löschen", MB_YESNO);
+		if (result == IDYES)
 		{
-			rec->GetFieldValue("fach_id", fachid);
-			rec->MoveNext();
-			fachIDs.push_back(fachid);
-		}
-		rec->Close();
-		
-		for (i = 0; i < fachIDs.size(); i++)
-		{
-			m_db->ExecuteSQL("DELETE FROM note WHERE fk_fach_id = " + fachIDs.at (i));
-		}
+			id = m_overview.GetItemData(m_selectedLine);
+			idStr.Format("%d", id);
+			rec->Open(CRecordset::snapshot, "SELECT * FROM fach WHERE fk_sem_id = " + idStr, NULL);
+			countLines = rec->GetRecordCount();
+			for (i = 0; i < countLines; i++)
+			{
+				rec->GetFieldValue("fach_id", fachid);
+				rec->MoveNext();
+				fachIDs.push_back(fachid);
+			}
+			rec->Close();
 
-		m_db->ExecuteSQL("DELETE FROM fach WHERE fk_sem_id = " + idStr);
-		m_db->ExecuteSQL("DELETE FROM semester WHERE sem_id = " + idStr);
+			for (i = 0; i < fachIDs.size(); i++)
+			{
+				m_db->ExecuteSQL("DELETE FROM note WHERE fk_fach_id = " + fachIDs.at(i));
+			}
+
+			m_db->ExecuteSQL("DELETE FROM fach WHERE fk_sem_id = " + idStr);
+			m_db->ExecuteSQL("DELETE FROM semester WHERE sem_id = " + idStr);
+			m_overview.DeleteItem(m_selectedLine);
+		}
 	}
 	else
 	{
