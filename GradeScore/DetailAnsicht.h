@@ -1,4 +1,5 @@
 #pragma once
+#include "afxcmn.h"
 
 #include "afxcmn.h"
 
@@ -32,6 +33,7 @@ protected:
 
 public:
 	int m_fachid;
+	CListCtrl m_notenList;
 	afx_msg void OnBnClickedNoteHinzufuegen();
 	afx_msg void OnBnClickedNoteEntfernen();
 	afx_msg void OnBnClickedMenu();

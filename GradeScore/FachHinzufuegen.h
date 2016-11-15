@@ -20,4 +20,8 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 	DECLARE_MESSAGE_MAP()
+public:
+	CString m_fachname;
+	BOOL m_okClicked;
+	afx_msg void OnBnClickedOk();
 };

@@ -5,6 +5,7 @@
 #include "GradeScore.h"
 #include "MenuDlg.h"
 #include "afxdialogex.h"
+#include "FachHinzufuegen.h"
 
 #include <string>
 #include <vector>
@@ -56,8 +57,8 @@ BOOL CMenuDlg::OnInitDialog()
 	CDialogEx::OnInitDialog();
 
 	m_fachList.InsertColumn(0, "Fach", LVCFMT_LEFT, 200);
-	m_fachList.InsertColumn(0, "Note", LVCFMT_RIGHT, 100);
-	m_fachList.InsertColumn(0, "Note gerundet", LVCFMT_RIGHT, 100);
+	m_fachList.InsertColumn(1, "Note", LVCFMT_RIGHT, 100);
+	m_fachList.InsertColumn(2, "Note gerundet", LVCFMT_RIGHT, 100);
 	m_fachList.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES | LVS_EX_ONECLICKACTIVATE
 		| LVS_EX_AUTOSIZECOLUMNS | LVS_EX_JUSTIFYCOLUMNS);
 
@@ -196,20 +197,42 @@ void CMenuDlg::OnNMClickModule(NMHDR *pNMHDR, LRESULT *pResult)
 void CMenuDlg::OnNMDblclkModule(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
-	// TODO: Fügen Sie hier Ihren Kontrollbehandlungscode für die Benachrichtigung ein.
+	OnBnClickedFachAuswaehlen();
 	*pResult = 0;
 }
 
 
 void CMenuDlg::OnBnClickedSemesterWechseln()
 {
-	// TODO: Fügen Sie hier Ihren Kontrollbehandlungscode für die Benachrichtigung ein.
+	OnCancel();
 }
 
 
 void CMenuDlg::OnBnClickedFachHinzufuegen()
 {
-	// TODO: Fügen Sie hier Ihren Kontrollbehandlungscode für die Benachrichtigung ein.
+	CFachHinzufuegen dlg;
+	if (dlg.DoModal())
+	{
+		if (dlg.m_okClicked)
+		{
+			if (dlg.m_fachname != "")
+			{
+				try
+				{
+					m_db->ExecuteSQL("INSERT INTO fach VALUES");
+				}
+				catch (CDBException *e)
+				{
+					MessageBox("Das Fach konnte nicht erfasst werden.", "Error", MB_ICONERROR);
+				}
+			}
+			else
+			{
+				MessageBox("Bitte geben Sie einen Namen für das neue Fach an.", "Name eingeben", NULL);
+				OnBnClickedFachHinzufuegen();
+			}
+		}
+	}
 }
 
 
