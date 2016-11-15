@@ -143,7 +143,7 @@ double CMenuDlg::GesamtnoteBerechnen(int fachid)
 	struct SNote
 	{
 		double Note;
-		double Fakrot;
+		double Gewichtung;
 	};
 
 	vector<SNote> vecNoten;
@@ -152,7 +152,7 @@ double CMenuDlg::GesamtnoteBerechnen(int fachid)
 		SNote xNote;
 		xNote.Note = atof(m_faecher[i]["note"]);
 		xNote.Gewichtung = -1.0;
-		if (!m_faecher[i]["Gewichtung"].empty())
+		if (!m_faecher[i]["Gewichtung"].IsEmpty())
 		{
 			xNote.Gewichtung = atof(m_faecher[i]["Gewichtung"]) / 100.0;
 			dGesamtGewichtung += xNote.Gewichtung;
