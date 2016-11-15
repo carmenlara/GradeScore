@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ generated include file.
-// Used by GradeScore.rc
+// Von Microsoft Visual C++ generierte Includedatei.
+// Verwendet durch GradeScore.rc
 //
 #define IDD_ABOUTBOX                    100
 #define IDP_OLE_INIT_FAILED             100

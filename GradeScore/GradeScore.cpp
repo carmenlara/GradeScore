@@ -11,6 +11,8 @@
 #include "GradeScoreDoc.h"
 #include "GradeScoreView.h"
 
+CDatabase *m_db;
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif

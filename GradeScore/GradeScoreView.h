@@ -47,7 +47,6 @@ protected:
 public:
 	// Selbsterstellte Variablen
 	int m_selectedLine;
-	CDatabase *m_db;
 
 	// Control Variablen
 	CListCtrl m_overview;
@@ -61,6 +60,7 @@ public:
 	afx_msg void OnBnClickedAddSemester();
 	afx_msg void OnBnClickedDeleteSemester();
 	afx_msg void OnBnClickedSelectSemester();
+	virtual BOOL DestroyWindow();
 };
 
 #ifndef _DEBUG  // Debugversion in GradeScoreView.cpp

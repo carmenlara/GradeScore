@@ -12,11 +12,14 @@
 #include "GradeScoreDoc.h"
 #include "GradeScoreView.h"
 #include "AddSemester.h"
+#include "MenuDlg.h"
 
 #include <string>
 #include <vector>
 
 using namespace std;
+
+extern CDatabase *m_db;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -234,5 +237,20 @@ void CGradeScoreView::OnBnClickedDeleteSemester()
 // Button Semester auswählen
 void CGradeScoreView::OnBnClickedSelectSemester()
 {
-	// TODO: Fügen Sie hier Ihren Kontrollbehandlungscode für die Benachrichtigung ein.
+	CMenuDlg dlg;
+	if (m_selectedLine != -1)
+	{
+		dlg.m_idSemester.Format("%d", m_overview.GetItemData(m_selectedLine));
+		dlg.m_beschriftung = m_overview.GetItemText(m_selectedLine, 0);
+		dlg.m_jahr = m_overview.GetItemText(m_selectedLine, 1);
+		dlg.m_semester = m_overview.GetItemText(m_selectedLine, 2);
+		dlg.DoModal();
+	}
+}
+
+
+BOOL CGradeScoreView::DestroyWindow()
+{
+	m_db->Close();
+	return CFormView::DestroyWindow();
 }
