@@ -1,5 +1,6 @@
 #pragma once
 
+#include "afxcmn.h"
 
 // CDetailAnsicht dialog
 
@@ -15,11 +16,20 @@ public:
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_DETAIL_ANSICHT };
 #endif
+private:
+
+	// Control Variablen
+	CListCtrl m_overview;
+
+	// Hilfsmethoden
+	afx_msg void LoadData();
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void init(); // Erster Aufruf nach Erstellung
 
 	DECLARE_MESSAGE_MAP()
+
 public:
 	int m_fachid;
 };

@@ -34,6 +34,55 @@ BEGIN_MESSAGE_MAP(CDetailAnsicht, CDialogEx)
 	ON_BN_CLICKED(IDOK, &CDetailAnsicht::OnBnClickedOk)
 END_MESSAGE_MAP()
 
+void CDetailAnsicht::init()
+{
+	CFormView::OnInitialUpdate();
+	GetParentFrame()->RecalcLayout();
+	ResizeParentToFit();
+
+	CImageList il;
+	m_db = new CDatabase();
+	m_db->OpenEx("DSN=GradeScore;SERVER=localhost;UID=postgres;PWD={As2016sql_5};", FALSE);
+
+	// Tabellenraster
+	m_overview.InsertColumn(0, _T("Beschriftung"), LVCFMT_LEFT, 250);
+	m_overview.InsertColumn(1, _T("Jahr"), LVCFMT_LEFT, 80);
+	m_overview.InsertColumn(2, _T("Semester"), LVCFMT_LEFT, 150);
+	this->m_overview.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES | LVS_EX_ONECLICKACTIVATE
+		| LVS_EX_AUTOSIZECOLUMNS | LVS_EX_JUSTIFYCOLUMNS);
+
+	il.Create(1, 25, ILC_COLOR, 1, 1);
+	m_overview.SetImageList(&il, LVSIL_SMALL);
+
+	LoadDBInList();
+}
+
+void CDetailAnsicht::LoadData()
+{
+	CRecordset *rec = new CRecordset(m_db);
+	CString id, beschriftung, note, datum, gewichtung, query;
+	int i = 0;
+	query = CString.Format("SELECT * FROM fach WHERE id = %d;", m_fachid);
+	m_overview.DeleteAllItems();
+	rec->Open(CRecordset::snapshot, query, NULL);
+	while (!rec->IsEOF())
+	{
+		rec->GetFieldValue("note_id", id);
+		rec->GetFieldValue("beschriftung", beschriftung);
+		rec->GetFieldValue("note", note);
+		rec->GetFieldValue("date", datum);
+		rec->GetFieldValue("gewichtung", gewichtung);
+
+		m_overview.InsertItem(i, beschriftung);
+		m_overview.SetItemText(i, 1, datum);
+		m_overview.SetItemText(i, 2, semester);
+		m_overview.SetItemText(i, 3, gewichtung);
+		m_overview.SetItemData(i, (DWORD)_ttoi(id));
+		i++;
+		rec->MoveNext();
+	}
+	rec->Close();
+}
 
 // CDetailAnsicht message handlers
 
