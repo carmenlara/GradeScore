@@ -23,7 +23,6 @@ private:
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual void init(); // Erster Aufruf nach Erstellung
 
 	DECLARE_MESSAGE_MAP()
 

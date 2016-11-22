@@ -6,6 +6,7 @@
 #include "DetailAnsicht.h"
 #include "afxdialogex.h"
 
+extern CDatabase *m_db;
 
 // CDetailAnsicht dialog
 
@@ -34,12 +35,13 @@ BEGIN_MESSAGE_MAP(CDetailAnsicht, CDialogEx)
 	ON_BN_CLICKED(IDOK, &CDetailAnsicht::OnBnClickedOk)
 END_MESSAGE_MAP()
 
-void CDetailAnsicht::init()
-{
-	CFormView::OnInitialUpdate();
-	GetParentFrame()->RecalcLayout();
-	ResizeParentToFit();
+// CDetailAnsicht message handlers
 
+
+BOOL CDetailAnsicht::OnInitDialog()
+{
+	CDialogEx::OnInitDialog();
+	
 	CImageList il;
 	m_db = new CDatabase();
 	m_db->OpenEx("DSN=GradeScore;SERVER=localhost;UID=postgres;PWD={As2016sql_5};", FALSE);
@@ -54,15 +56,20 @@ void CDetailAnsicht::init()
 	il.Create(1, 25, ILC_COLOR, 1, 1);
 	m_notenList.SetImageList(&il, LVSIL_SMALL);
 
-	LoadDBInList();
+	LoadData();
+
+	return TRUE;  // return TRUE unless you set the focus to a control
+				  // AUSNAHME: OCX-Eigenschaftenseite muss FALSE zurückgeben.
 }
+
 
 void CDetailAnsicht::LoadData()
 {
 	CRecordset *rec = new CRecordset(m_db);
-	CString id, beschriftung, note, datum, gewichtung, query;
+	CString id, beschriftung, note, datum, gewichtung, query, semester;
 	int i = 0;
-	query = CString.Format("SELECT * FROM fach WHERE fk_fach_id = %d;", m_fachid);
+	id.Format("%d", m_fachid);
+	query = "SELECT * FROM fach WHERE fk_fach_id = " + id;
 	m_notenList.DeleteAllItems();
 	rec->Open(CRecordset::snapshot, query, NULL);
 	while (!rec->IsEOF())
@@ -82,19 +89,6 @@ void CDetailAnsicht::LoadData()
 		rec->MoveNext();
 	}
 	rec->Close();
-}
-
-// CDetailAnsicht message handlers
-
-
-BOOL CDetailAnsicht::OnInitDialog()
-{
-	CDialogEx::OnInitDialog();
-	LoadData();
-	init();
-
-	return TRUE;  // return TRUE unless you set the focus to a control
-				  // AUSNAHME: OCX-Eigenschaftenseite muss FALSE zurückgeben.
 }
 
 
