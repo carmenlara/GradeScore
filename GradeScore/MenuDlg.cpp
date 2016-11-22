@@ -57,8 +57,12 @@ BOOL CMenuDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
+	CString gesamtnoteStr;
+	double gesamtnote = 0;
+	int i = 0;
+
 	m_fachList.InsertColumn(0, "Fach", LVCFMT_LEFT, 200);
-	m_fachList.InsertColumn(1, "Note", LVCFMT_RIGHT, 100);
+	m_fachList.InsertColumn(1, "Note", LVCFMT_LEFT, 100);
 	m_fachList.InsertColumn(2, "Note gerundet", LVCFMT_RIGHT, 100);
 	m_fachList.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES | LVS_EX_ONECLICKACTIVATE
 		| LVS_EX_AUTOSIZECOLUMNS | LVS_EX_JUSTIFYCOLUMNS);
@@ -66,6 +70,34 @@ BOOL CMenuDlg::OnInitDialog()
 	FaecherHolen();
 	NotenHolen();
 	LoadListCtrl();
+
+	// Gesamtnote berechnen und Info ausgeben
+	for (i = 0; i < m_faecher.size(); i++)
+	{
+		gesamtnote += GesamtnoteBerechnen(_ttoi (m_faecher[i]["id"]));
+	}
+	if (i != 0)
+	{
+		gesamtnote = gesamtnote / m_faecher.size();
+		gesamtnote = (double)((int)(gesamtnote * 100)) / 100;
+		gesamtnoteStr.Format("%f", gesamtnote);
+	}
+	else
+	{
+		gesamtnoteStr = "Noch keine Noten vorhanden";
+	}	
+
+	if (m_beschriftung != "")
+	{
+		m_info = "Aktuelles Schuljahr " + m_jahr + ", Semester " + m_semester +
+			"\r\n" + m_beschriftung + "\r\n Gesamtnote: " + gesamtnoteStr;
+	}
+	else
+	{
+		m_info = "Aktuelles Schuljahr " + m_jahr + ", Semester " + m_semester +
+			"\r\n Gesamtnote: " + gesamtnoteStr;
+	}
+	UpdateData(FALSE);
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 				  // AUSNAHME: OCX-Eigenschaftenseite muss FALSE zurückgeben.
@@ -76,7 +108,6 @@ void CMenuDlg::FaecherHolen()
 {
 	CRecordset *rec = new CRecordset(m_db);
 	CString query = "SELECT * FROM fach WHERE fach.\"fk_sem_id\" = " + m_idSemester, idFachStr, fach;
-	int idFach = 0;
 	int i = 0;
 	m_faecher.clear();
 	rec->Open(CRecordset::snapshot, query, NULL);
@@ -84,8 +115,7 @@ void CMenuDlg::FaecherHolen()
 	{
 		rec->GetFieldValue("fach_id", idFachStr);
 		rec->GetFieldValue("fach", fach);
-		idFach = _ttoi(idFachStr);
-		m_faecher [i] ["id"] = fach;
+		m_faecher [i] ["id"] = idFachStr;
 		m_faecher [i] ["fach"] = fach;
 		rec->MoveNext();
 		i++;
