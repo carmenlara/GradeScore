@@ -6,6 +6,7 @@
 #include "MenuDlg.h"
 #include "afxdialogex.h"
 #include "FachHinzufuegen.h"
+#include "DetailAnsicht.h"
 
 #include <string>
 #include <vector>
@@ -77,6 +78,7 @@ void CMenuDlg::FaecherHolen()
 	CString query = "SELECT * FROM fach WHERE fach.\"fk_sem_id\" = " + m_idSemester, idFachStr, fach;
 	int idFach = 0;
 	int i = 0;
+	m_faecher.clear();
 	rec->Open(CRecordset::snapshot, query, NULL);
 	while (!rec->IsEOF())
 	{
@@ -98,6 +100,7 @@ void CMenuDlg::NotenHolen()
 	CString idFachStr, noteStr, gewichtungStr;
 	int i = 0;
 	int fachid = 0;
+	m_noten.clear();
 	for (i = 0; i < m_faecher.size(); i++)
 	{
 		m_noten.clear();
@@ -122,6 +125,7 @@ void CMenuDlg::LoadListCtrl()
 	int i = 0;
 	double note = 0.0;
 	CString noteStr, notegerundetStr;
+	m_fachList.DeleteAllItems();
 	for (i = 0; i < m_faecher.size(); i++)
 	{
 		note = GesamtnoteBerechnen(_ttoi(m_faecher[i]["id"]));
@@ -219,7 +223,10 @@ void CMenuDlg::OnBnClickedFachHinzufuegen()
 			{
 				try
 				{
-					m_db->ExecuteSQL("INSERT INTO fach VALUES");
+					m_db->ExecuteSQL("INSERT INTO fach (fach_id, fach, fk_sem_id) VALUES");
+					FaecherHolen();
+					NotenHolen();
+					LoadListCtrl();
 				}
 				catch (CDBException *e)
 				{
@@ -238,13 +245,37 @@ void CMenuDlg::OnBnClickedFachHinzufuegen()
 
 void CMenuDlg::OnBnClickedFachAuswaehlen()
 {
-	
+	CDetailAnsicht dlg;
+	if (m_listLine != -1)
+	{
+		dlg.m_fachid = m_listLine;
+		dlg.DoModal();
+	}
+	else
+	{
+		AfxMessageBox("Bitte wählen Sie ein Fach aus.");
+	}
 }
 
 
 void CMenuDlg::OnBnClickedFachEntfernen()
 {
-	// TODO: Fügen Sie hier Ihren Kontrollbehandlungscode für die Benachrichtigung ein.
+	CString id;
+	if (m_listLine != -1)
+	{
+		id.Format("%d", m_fachList.GetItemData(m_listLine));
+		try
+		{
+			m_db->ExecuteSQL("DELETE FROM fach WHERE fach_id = " + id);
+			FaecherHolen();
+			NotenHolen();
+			m_fachList.DeleteItem(m_listLine);
+		}
+		catch (CDBException *e)
+		{
+			AfxMessageBox("Das Fach konnte nicht gelöscht werden.");
+		}
+	}
 }
 
 
