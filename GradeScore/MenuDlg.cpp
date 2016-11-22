@@ -24,7 +24,7 @@ CMenuDlg::CMenuDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_MENU, pParent)
 	, m_info(_T(""))
 {
-
+	m_listLine = -1;
 }
 
 CMenuDlg::~CMenuDlg()
@@ -253,7 +253,7 @@ void CMenuDlg::OnBnClickedFachHinzufuegen()
 			{
 				try
 				{
-					m_db->ExecuteSQL("INSERT INTO fach (fach_id, fach, fk_sem_id) VALUES");
+					m_db->ExecuteSQL("INSERT INTO fach (fach, fk_sem_id) VALUES ('" + dlg.m_fachname + "', " + m_idSemester + ")");
 					FaecherHolen();
 					NotenHolen();
 					LoadListCtrl();

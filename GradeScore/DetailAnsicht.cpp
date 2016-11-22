@@ -5,6 +5,12 @@
 #include "GradeScore.h"
 #include "DetailAnsicht.h"
 #include "afxdialogex.h"
+#include "NoteHinzufuegen.h"
+
+#include <string>
+#include <algorithm>
+
+using namespace std;
 
 extern CDatabase *m_db;
 
@@ -15,7 +21,7 @@ IMPLEMENT_DYNAMIC(CDetailAnsicht, CDialogEx)
 CDetailAnsicht::CDetailAnsicht(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_DETAIL_ANSICHT, pParent)
 {
-
+	m_listLine = -1;
 }
 
 CDetailAnsicht::~CDetailAnsicht()
@@ -31,8 +37,9 @@ void CDetailAnsicht::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CDetailAnsicht, CDialogEx)
 	ON_BN_CLICKED(IDC_NOTE_HINZUFUEGEN, &CDetailAnsicht::OnBnClickedNoteHinzufuegen)
 	ON_BN_CLICKED(IDC_NOTE_ENTFERNEN, &CDetailAnsicht::OnBnClickedNoteEntfernen)
-	ON_BN_CLICKED(IDC_MENU, &CDetailAnsicht::OnBnClickedMenu)
-	ON_BN_CLICKED(IDOK, &CDetailAnsicht::OnBnClickedOk)
+	ON_NOTIFY(NM_CLICK, IDC_NOTEN_UEBERSICHT, &CDetailAnsicht::OnNMClickNotenUebersicht)
+	ON_BN_CLICKED(IDC_NOTE_BEARBEITEN, &CDetailAnsicht::OnBnClickedNoteBearbeiten)
+	ON_NOTIFY(NM_DBLCLK, IDC_NOTEN_UEBERSICHT, &CDetailAnsicht::OnNMDblclkNotenUebersicht)
 END_MESSAGE_MAP()
 
 // CDetailAnsicht message handlers
@@ -47,9 +54,10 @@ BOOL CDetailAnsicht::OnInitDialog()
 	m_db->OpenEx("DSN=GradeScore;SERVER=localhost;UID=postgres;PWD={As2016sql_5};", FALSE);
 
 	// Tabellenraster
-	m_notenList.InsertColumn(0, _T("Beschriftung"), LVCFMT_LEFT, 250);
-	m_notenList.InsertColumn(1, _T("Jahr"), LVCFMT_LEFT, 80);
-	m_notenList.InsertColumn(2, _T("Semester"), LVCFMT_LEFT, 150);
+	m_notenList.InsertColumn(0, _T("Note"), LVCFMT_LEFT, 80);
+	m_notenList.InsertColumn(1, _T("Gewichtung"), LVCFMT_LEFT, 80);
+	m_notenList.InsertColumn(2, _T("Datum"), LVCFMT_LEFT, 80);
+	m_notenList.InsertColumn(3, _T("Beschriftung"), LVCFMT_LEFT, 150);
 	this->m_notenList.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES | LVS_EX_ONECLICKACTIVATE
 		| LVS_EX_AUTOSIZECOLUMNS | LVS_EX_JUSTIFYCOLUMNS);
 
@@ -94,24 +102,80 @@ void CDetailAnsicht::LoadData()
 
 void CDetailAnsicht::OnBnClickedNoteHinzufuegen()
 {
-	// TODO: Fügen Sie hier Ihren Kontrollbehandlungscode für die Benachrichtigung ein.
+	CNoteHinzufuegen dlg;
+	CString note, fachid;
+	if (dlg.DoModal())
+	{
+		if (dlg.m_okClicked)
+		{
+			if (dlg.m_note != 0)
+			{
+				note.Format("%f", dlg.m_note);
+				fachid.Format("%d", m_fachid);
+				try
+				{
+					m_db->ExecuteSQL("INSERT INTO note (note, gewichtung, date, beschriftung, fk_fach_id) VALUES (" + note + ", " + dlg.m_gewichtung + ", '" + dlg.m_dateCTime.Format("%d.%m.%Y") + "', '" + dlg.m_beschriftung + "', " + fachid + ")");
+					LoadData();
+				}
+				catch (CDBException *e)
+				{
+					AfxMessageBox("Die Note konnte nicht hinzugefügt werden.");
+				}
+			}
+			else
+			{
+				AfxMessageBox("Bitte geben Sie eine Note ein.");
+				OnBnClickedNoteHinzufuegen();
+			}
+		}
+	}
+}
+
+
+void CDetailAnsicht::OnBnClickedNoteBearbeiten()
+{
+	CNoteHinzufuegen dlg;
+	string date;
+	if (m_listLine != -1)
+	{
+		dlg.m_bearbeiten = TRUE;
+		dlg.m_note = atof(m_notenList.GetItemText(m_listLine, 0));
+	}
+	else
+	{
+		AfxMessageBox("Bitte wählen Sie zuerst eine Note aus, die Sie bearbeiten möchten.");
+	}
 }
 
 
 void CDetailAnsicht::OnBnClickedNoteEntfernen()
 {
-	// TODO: Fügen Sie hier Ihren Kontrollbehandlungscode für die Benachrichtigung ein.
+	CString id;
+	if (m_listLine != -1)
+	{
+		id.Format("%d", m_notenList.GetItemData(m_listLine));
+		m_db->ExecuteSQL("DELETE FROM note WHERE note_id = " + id);
+		m_notenList.DeleteItem(m_listLine);
+	}
+	else
+	{
+		AfxMessageBox("Bitte wählen Sie zuerst eine Note aus, die Sie löschen möchten.");
+	}
 }
 
 
-void CDetailAnsicht::OnBnClickedMenu()
+void CDetailAnsicht::OnNMClickNotenUebersicht(NMHDR *pNMHDR, LRESULT *pResult)
 {
-	// TODO: Fügen Sie hier Ihren Kontrollbehandlungscode für die Benachrichtigung ein.
+	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+	m_listLine = m_notenList.GetSelectionMark();
+	m_notenList.SetSelectionMark(-1);
+	*pResult = 0;
 }
 
 
-void CDetailAnsicht::OnBnClickedOk()
+void CDetailAnsicht::OnNMDblclkNotenUebersicht(NMHDR *pNMHDR, LRESULT *pResult)
 {
-	// TODO: Fügen Sie hier Ihren Kontrollbehandlungscode für die Benachrichtigung ein.
-	CDialogEx::OnOK();
+	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+	OnBnClickedNoteBearbeiten();
+	*pResult = 0;
 }

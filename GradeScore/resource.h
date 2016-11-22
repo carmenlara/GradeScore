@@ -36,6 +36,8 @@
 #define IDC_NOTE_HINZUFUEGEN            1021
 #define IDC_NOTE_ENTFERNEN              1022
 #define IDC_MENU                        1023
+#define IDC_NOTE_HINZUFUEGEN2           1023
+#define IDC_NOTE_BEARBEITEN             1023
 #define IDC_EDIT1                       1024
 #define IDC_EDIT2                       1025
 #define IDC_EDIT3                       1026

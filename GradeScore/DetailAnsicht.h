@@ -28,10 +28,12 @@ protected:
 
 public:
 	int m_fachid;
+	int m_listLine;
 	CListCtrl m_notenList;
 	afx_msg void OnBnClickedNoteHinzufuegen();
 	afx_msg void OnBnClickedNoteEntfernen();
-	afx_msg void OnBnClickedMenu();
-	afx_msg void OnBnClickedOk();
 	virtual BOOL OnInitDialog();
+	afx_msg void OnNMClickNotenUebersicht(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnBnClickedNoteBearbeiten();
+	afx_msg void OnNMDblclkNotenUebersicht(NMHDR *pNMHDR, LRESULT *pResult);
 };

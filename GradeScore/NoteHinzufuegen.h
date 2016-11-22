@@ -1,4 +1,5 @@
 #pragma once
+#include "atltime.h"
 
 
 // CNoteHinzufuegen dialog
@@ -20,4 +21,15 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 	DECLARE_MESSAGE_MAP()
+public:
+	double m_note;
+	CTime m_dateCTime;
+	CString m_beschriftung;
+	CString m_gewichtung;
+	BOOL m_okClicked;
+	BOOL m_gewichtungOK;
+	BOOL m_bearbeiten;
+	afx_msg void OnBnClickedOk();
+	afx_msg void OnKillfocusEditGewichtung();
+	virtual BOOL OnInitDialog();
 };
