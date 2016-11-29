@@ -51,17 +51,13 @@ END_MESSAGE_MAP()
 // CNoteHinzufuegen message handlers
 
 
-BOOL CNoteHinzufuegen::OnInitDialog()
+void CNoteHinzufuegen::OnBnClickedOk()
 {
-	CDialogEx::OnInitDialog();
-
-	if (m_bearbeiten)
+	if (!m_gewichtungOK)
 	{
-		SetWindowTextA("Note bearbeiten");
+		m_okClicked = TRUE;
+		CDialogEx::OnOK();
 	}
-
-	return TRUE;  // return TRUE unless you set the focus to a control
-				  // AUSNAHME: OCX-Eigenschaftenseite muss FALSE zurückgeben.
 }
 
 
@@ -97,11 +93,15 @@ void CNoteHinzufuegen::OnKillfocusEditGewichtung()
 }
 
 
-void CNoteHinzufuegen::OnBnClickedOk()
+BOOL CNoteHinzufuegen::OnInitDialog()
 {
-	if (!m_gewichtungOK)
+	CDialogEx::OnInitDialog();
+
+	if (m_bearbeiten)
 	{
-		m_okClicked = TRUE;
-		CDialogEx::OnOK();
+		SetWindowTextA("Note bearbeiten");
 	}
+
+	return TRUE;  // return TRUE unless you set the focus to a control
+				  // AUSNAHME: OCX-Eigenschaftenseite muss FALSE zurückgeben.
 }

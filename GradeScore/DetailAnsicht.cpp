@@ -50,6 +50,8 @@ BOOL CDetailAnsicht::OnInitDialog()
 	CDialogEx::OnInitDialog();
 	
 	CImageList il;
+	m_db = new CDatabase();
+	m_db->OpenEx("DSN=GradeScore;SERVER=localhost;UID=postgres;PWD={As2016sql_5};", FALSE);
 
 	// Tabellenraster
 	m_notenList.InsertColumn(0, _T("Note"), LVCFMT_LEFT, 80);
@@ -134,33 +136,10 @@ void CDetailAnsicht::OnBnClickedNoteBearbeiten()
 {
 	CNoteHinzufuegen dlg;
 	string date;
-	CString id, note;
 	if (m_listLine != -1)
 	{
-		id.Format("%d", m_notenList.GetItemData(m_listLine));
 		dlg.m_bearbeiten = TRUE;
 		dlg.m_note = atof(m_notenList.GetItemText(m_listLine, 0));
-
-		if (dlg.DoModal())
-		{
-			if (dlg.m_note != NULL || dlg.m_note != 0.0)
-			{
-				try
-				{
-					note.Format("%f", dlg.m_note);
-					m_db->ExecuteSQL("Update fach SET note = '" + note + "', gewichtung = " + dlg.m_gewichtung + ", date = '" + dlg.m_dateCTime.Format("%d.%m.%Y") + "', beschriftung = '" + dlg.m_beschriftung + "' WHERE fach_id = " + id);
-				}
-				catch (CDBException *e)
-				{
-					AfxMessageBox("Die Note konnte nicht bearbeitet werden.");
-				}
-			}
-			else
-			{
-				AfxMessageBox("Bitte geben Sie eine Note ein.");
-				OnBnClickedNoteBearbeiten();
-			}
-		}
 	}
 	else
 	{
