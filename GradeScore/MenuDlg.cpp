@@ -76,7 +76,7 @@ BOOL CMenuDlg::OnInitDialog()
 	{
 		gesamtnote += GesamtnoteBerechnen(_ttoi (m_faecher[i]["id"]));
 	}
-	if (i != 0)
+	if (m_faecher.size() != 0)
 	{
 		gesamtnote = gesamtnote / m_faecher.size();
 		gesamtnote = (double)((int)(gesamtnote * 100)) / 100;
@@ -290,21 +290,30 @@ void CMenuDlg::OnBnClickedFachAuswaehlen()
 
 void CMenuDlg::OnBnClickedFachEntfernen()
 {
-	CString id;
+	CString id, fach;
 	if (m_listLine != -1)
 	{
-		id.Format("%d", m_fachList.GetItemData(m_listLine));
-		try
+		fach = m_fachList.GetItemText(m_listLine, 0);
+		const int result = MessageBox("Möchten Sie das Fach \"" + fach + "\" wirklich löschen?", "Fach Löschen", MB_YESNO);
+		if (result == IDYES)
 		{
-			m_db->ExecuteSQL("DELETE FROM fach WHERE fach_id = " + id);
-			FaecherHolen();
-			NotenHolen();
-			m_fachList.DeleteItem(m_listLine);
+			id.Format("%d", m_fachList.GetItemData(m_listLine));
+			try
+			{
+				m_db->ExecuteSQL("DELETE FROM fach WHERE fach_id = " + id);
+				FaecherHolen();
+				NotenHolen();
+				m_fachList.DeleteItem(m_listLine);
+			}
+			catch (CDBException *e)
+			{
+				AfxMessageBox("Das Fach konnte nicht gelöscht werden.");
+			}
 		}
-		catch (CDBException *e)
-		{
-			AfxMessageBox("Das Fach konnte nicht gelöscht werden.");
-		}
+	}
+	else
+	{
+		AfxMessageBox("Bitte wählen Sie ein Fach aus, das Sie löschen möchten.");
 	}
 }
 
