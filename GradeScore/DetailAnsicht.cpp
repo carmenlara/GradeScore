@@ -108,7 +108,7 @@ void CDetailAnsicht::OnBnClickedNoteHinzufuegen()
 	{
 		if (dlg.m_okClicked)
 		{
-			if (dlg.m_note != 0)
+			if (dlg.m_note != 0.0)
 			{
 				note.Format("%f", dlg.m_note);
 				fachid.Format("%d", m_fachid);
