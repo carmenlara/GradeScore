@@ -67,14 +67,8 @@ void CNoteHinzufuegen::OnKillfocusEditGewichtung()
 	{
 		string gwt = (string)m_gewichtung;
 		int digit = 0;
-		if ((gwt.find(".") != std::string::npos) && (gwt.find(",") != std::string::npos))
+		if ((std::find(gwt.begin(), gwt.end(), ".") == gwt.end()) && (std::find(gwt.begin(), gwt.end(), ",") == gwt.end()))
 		{
-			// Contains "."
-			AfxMessageBox("Bitte geben Sie eine ganze Zahl ohne Sonderzeichen ein.");
-		}
-		else
-		{
-			// Does not contain "."
 			digit = _ttoi(m_gewichtung);
 			if (digit < 0 || digit > 100)
 			{
@@ -84,6 +78,10 @@ void CNoteHinzufuegen::OnKillfocusEditGewichtung()
 			{
 				m_gewichtungOK = TRUE;
 			}
+		}
+		else
+		{
+			AfxMessageBox("Bitte geben Sie eine ganze Zahl ohne Sonderzeichen ein.");
 		}
 	}
 	else
