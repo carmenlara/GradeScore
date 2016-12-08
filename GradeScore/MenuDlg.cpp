@@ -47,6 +47,7 @@ BEGIN_MESSAGE_MAP(CMenuDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_FACH_ENTFERNEN, &CMenuDlg::OnBnClickedFachEntfernen)
 	ON_BN_CLICKED(IDC_GRAFISCHE_ANSICHT, &CMenuDlg::OnBnClickedGrafischeAnsicht)
 	ON_BN_CLICKED(IDC_FACH_AUSWAEHLEN, &CMenuDlg::OnBnClickedFachAuswaehlen)
+	ON_BN_CLICKED(IDC_FACH_BEARBEITEN, &CMenuDlg::OnBnClickedFachBearbeiten)
 END_MESSAGE_MAP()
 
 
@@ -57,24 +58,38 @@ BOOL CMenuDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	CString gesamtnoteStr;
-	double gesamtnote = 0;
-	int i = 0;
+	CImageList il;
 
-	m_fachList.InsertColumn(0, "Fach", LVCFMT_LEFT, 200);
+	m_fachList.InsertColumn(0, "Fach", LVCFMT_LEFT, 300);
 	m_fachList.InsertColumn(1, "Note", LVCFMT_LEFT, 100);
 	m_fachList.InsertColumn(2, "Note gerundet", LVCFMT_RIGHT, 100);
 	m_fachList.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES | LVS_EX_ONECLICKACTIVATE
 		| LVS_EX_AUTOSIZECOLUMNS | LVS_EX_JUSTIFYCOLUMNS);
 
+	il.Create(1, 25, ILC_COLOR, 1, 1);
+	m_fachList.SetImageList(&il, LVSIL_SMALL);
+
 	FaecherHolen();
 	NotenHolen();
 	LoadListCtrl();
+	ShowInfo();
 
+	UpdateData(FALSE);
+
+	return TRUE;  // return TRUE unless you set the focus to a control
+				  // AUSNAHME: OCX-Eigenschaftenseite muss FALSE zurückgeben.
+}
+
+
+void CMenuDlg::ShowInfo()
+{
+	CString gesamtnoteStr;
+	double gesamtnote = 0;
+	int i = 0;
 	// Gesamtnote berechnen und Info ausgeben
 	for (i = 0; i < m_faecher.size(); i++)
 	{
-		gesamtnote += GesamtnoteBerechnen(_ttoi (m_faecher[i]["id"]));
+		gesamtnote += GesamtnoteBerechnen(_ttoi(m_faecher[i]["id"]));
 	}
 	if (m_faecher.size() != 0)
 	{
@@ -85,7 +100,7 @@ BOOL CMenuDlg::OnInitDialog()
 	else
 	{
 		gesamtnoteStr = "Noch keine Noten vorhanden";
-	}	
+	}
 
 	if (m_beschriftung != "")
 	{
@@ -97,10 +112,6 @@ BOOL CMenuDlg::OnInitDialog()
 		m_info = "Aktuelles Schuljahr " + m_jahr + ", Semester " + m_semester +
 			"\r\n Gesamtnote: " + gesamtnoteStr;
 	}
-	UpdateData(FALSE);
-
-	return TRUE;  // return TRUE unless you set the focus to a control
-				  // AUSNAHME: OCX-Eigenschaftenseite muss FALSE zurückgeben.
 }
 
 
@@ -127,22 +138,21 @@ void CMenuDlg::FaecherHolen()
 void CMenuDlg::NotenHolen()
 {
 	CRecordset *rec = new CRecordset(m_db);
-	CString idFachStr, noteStr, gewichtungStr;
+	CString noteStr, gewichtungStr;
 	int i = 0;
 	int fachid = 0;
 	m_noten.clear();
 	for (i = 0; i < m_faecher.size(); i++)
 	{
 		m_noten.clear();
-		rec->Open(CRecordset::snapshot, "SELECT * FROM noten WHERE noten.\"fk_fach_id\" = " + m_faecher [i] ["id"], NULL);
+		rec->Open(CRecordset::snapshot, "SELECT * FROM note WHERE note.\"fk_fach_id\" = " + m_faecher [i] ["id"], NULL);
 		while (!rec->IsEOF())
 		{
-			rec->GetFieldValue("fach_id", idFachStr);
 			rec->GetFieldValue("note", noteStr);
 			rec->GetFieldValue("gewichtung", gewichtungStr);
-			fachid = _ttoi(idFachStr);
-			m_noten[fachid]["note"] = noteStr;
-			m_noten[fachid]["gewichtung"] = gewichtungStr;
+			m_noten[i]["fachid"] = m_faecher[i]["id"];
+			m_noten[i]["note"] = noteStr;
+			m_noten[i]["gewichtung"] = gewichtungStr;
 			rec->MoveNext();
 		}
 		rec->Close();
@@ -175,6 +185,7 @@ double CMenuDlg::GesamtnoteBerechnen(int fachid)
 	double dRet = 0.0;
 	double dGesamtGewichtung = 0.0;
 	int iOhneGewichtung = 0;
+	CString fachidStr;
 	struct SNote
 	{
 		double Note;
@@ -182,21 +193,25 @@ double CMenuDlg::GesamtnoteBerechnen(int fachid)
 	};
 
 	vector<SNote> vecNoten;
-	for (int i = 0; i < m_faecher.size(); ++i)
+	fachidStr.Format("%d", fachid);
+	for (int i = 0; i < m_noten.size(); ++i)
 	{
-		SNote xNote;
-		xNote.Note = atof(m_faecher[i]["note"]);
-		xNote.Gewichtung = -1.0;
-		if (!m_faecher[i]["Gewichtung"].IsEmpty())
+		if (m_noten[i]["fachid"] == fachidStr)
 		{
-			xNote.Gewichtung = atof(m_faecher[i]["Gewichtung"]) / 100.0;
-			dGesamtGewichtung += xNote.Gewichtung;
+			SNote xNote;
+			xNote.Note = atof(m_noten[i]["note"]);
+			xNote.Gewichtung = -1.0;
+			if (!m_noten[i]["Gewichtung"].IsEmpty())
+			{
+				xNote.Gewichtung = atof(m_noten[i]["Gewichtung"]) / 100.0;
+				dGesamtGewichtung += xNote.Gewichtung;
+			}
+			else
+			{
+				++iOhneGewichtung;
+			}
+			vecNoten.push_back(xNote);
 		}
-		else
-		{
-			++iOhneGewichtung;
-		}
-		vecNoten.push_back(xNote);
 	}
 
 	double dGewichtungÜbriger = (1.0 - dGesamtGewichtung) / iOhneGewichtung;
@@ -273,13 +288,58 @@ void CMenuDlg::OnBnClickedFachHinzufuegen()
 }
 
 
+void CMenuDlg::OnBnClickedFachBearbeiten()
+{
+	CFachHinzufuegen dlg;
+	CString id;
+	if (m_listLine != -1)
+	{
+		id.Format("%d", m_fachList.GetItemData(m_listLine));
+		dlg.m_fachname = m_fachList.GetItemText(m_listLine, 0);
+		if (dlg.DoModal())
+		{
+			if (dlg.m_okClicked)
+			{
+				if (dlg.m_fachname != "")
+				{
+					try
+					{
+						m_db->ExecuteSQL("UPDATE fach SET fach = '" + dlg.m_fachname + "' WHERE fach_id = " + id);
+						m_fachList.SetItemText(m_listLine, 0, dlg.m_fachname);
+					}
+					catch (CDBException *e)
+					{
+						AfxMessageBox("Das Fach konnte nicht bearbeitet werden.");
+					}
+				}
+				else
+				{
+					AfxMessageBox("Bitte geben Sie einen Fachnamen ein.");
+					OnBnClickedFachBearbeiten();
+				}
+			}
+		}
+	}
+	else
+	{
+		AfxMessageBox("Bitte wählen Sie ein Fach aus, das Sie bearbeiten möchten.");
+	}
+}
+
+
 void CMenuDlg::OnBnClickedFachAuswaehlen()
 {
 	CDetailAnsicht dlg;
 	if (m_listLine != -1)
 	{
-		dlg.m_fachid = m_listLine;
-		dlg.DoModal();
+		dlg.m_fachid = m_fachList.GetItemData(m_listLine);
+		if (dlg.DoModal())
+		{
+			FaecherHolen();
+			NotenHolen();
+			LoadListCtrl();
+			ShowInfo();
+		}
 	}
 	else
 	{

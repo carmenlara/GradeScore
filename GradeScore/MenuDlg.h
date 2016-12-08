@@ -43,6 +43,7 @@ public:
 	afx_msg void FaecherHolen();
 	afx_msg void NotenHolen();
 	afx_msg void LoadListCtrl();
+	afx_msg void ShowInfo();
 
 	virtual BOOL OnInitDialog();
 	afx_msg void OnNMClickModule(NMHDR *pNMHDR, LRESULT *pResult);
@@ -52,4 +53,5 @@ public:
 	afx_msg void OnBnClickedFachEntfernen();
 	afx_msg void OnBnClickedGrafischeAnsicht();
 	afx_msg void OnBnClickedFachAuswaehlen();
+	afx_msg void OnBnClickedFachBearbeiten();
 };

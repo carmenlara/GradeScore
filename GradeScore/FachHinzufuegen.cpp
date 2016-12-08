@@ -16,6 +16,7 @@ CFachHinzufuegen::CFachHinzufuegen(CWnd* pParent /*=NULL*/)
 	, m_fachname(_T(""))
 {
 	m_okClicked = FALSE;
+	m_bearbeiten = FALSE;
 }
 
 CFachHinzufuegen::~CFachHinzufuegen()
@@ -35,6 +36,21 @@ END_MESSAGE_MAP()
 
 
 // CFachHinzufuegen message handlers
+
+
+BOOL CFachHinzufuegen::OnInitDialog()
+{
+	CDialogEx::OnInitDialog();
+
+	m_okClicked = FALSE;
+	if (m_bearbeiten)
+	{
+		SetWindowTextA("Fach bearbeiten");
+	}
+
+	return TRUE;  // return TRUE unless you set the focus to a control
+				  // AUSNAHME: OCX-Eigenschaftenseite muss FALSE zurückgeben.
+}
 
 
 void CFachHinzufuegen::OnBnClickedOk()

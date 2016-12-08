@@ -77,7 +77,7 @@ void CGradeScoreView::OnInitialUpdate()
 	m_db->OpenEx("DSN=GradeScore;SERVER=localhost;UID=postgres;PWD={As2016sql_5};", FALSE);
 	
 	// Tabellenraster
-	m_overview.InsertColumn(0, _T("Beschriftung"), LVCFMT_LEFT, 250);
+	m_overview.InsertColumn(0, _T("Beschriftung"), LVCFMT_LEFT, 400);
 	m_overview.InsertColumn(1, _T("Jahr"), LVCFMT_LEFT, 80);
 	m_overview.InsertColumn(2, _T("Semester"), LVCFMT_LEFT, 150);
 	this->m_overview.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES | LVS_EX_ONECLICKACTIVATE

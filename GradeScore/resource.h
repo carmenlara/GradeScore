@@ -12,7 +12,6 @@
 #define IDD_FACH_HINZUFUEGEN            317
 #define IDD_DETAIL_ANSICHT              319
 #define IDD_NOTE_HINZUFUEGEN            321
-#define IDD_GRAFIK                      323
 #define IDC_OVERVIEW                    1000
 #define IDC_STATICTITLE                 1001
 #define IDC_ADD_SEMESTER                1002
@@ -31,20 +30,17 @@
 #define IDC_FACH_HINZUFUEGEN2           1017
 #define IDC_FACH_AUSWAEHLEN             1017
 #define IDC_STATIC_FACH_BEZEICHNUNG     1018
+#define IDC_FACH_BEARBEITEN             1018
 #define IDC_NOTEN_UEBERSICHT            1019
 #define IDC_NOTEN_DETAILS               1020
 #define IDC_NOTE_HINZUFUEGEN            1021
 #define IDC_NOTE_ENTFERNEN              1022
-#define IDC_MENU                        1023
-#define IDC_NOTE_HINZUFUEGEN2           1023
 #define IDC_NOTE_BEARBEITEN             1023
 #define IDC_EDIT1                       1024
 #define IDC_EDIT2                       1025
 #define IDC_EDIT3                       1026
 #define IDC_DATETIMEPICKER1             1027
 #define IDC_BUTTON1                     1028
-#define IDC_STATIC_GESAMMTUEBERSICHT    1029
-#define IDC_GRAFIK                      1030
 
 // Next default values for new objects
 // 

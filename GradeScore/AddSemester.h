@@ -1,7 +1,6 @@
 #pragma once
 #include "afxwin.h"
 
-
 // CAddSemester-Dialogfeld
 
 class CAddSemester : public CDialogEx
@@ -23,10 +22,10 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	CString m_beschriftung;
-	int m_jahr;
 	CComboBox m_semester;
-	afx_msg void OnBnClickedOk();
-	BOOL m_okClicked;
-	afx_msg void OnSelchangeSemester();
+	int m_jahr;
 	int m_semesterNr;
+	BOOL m_okClicked;
+	afx_msg void OnBnClickedOk();
+	afx_msg void OnSelchangeSemester();
 };

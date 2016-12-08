@@ -23,5 +23,7 @@ protected:
 public:
 	CString m_fachname;
 	BOOL m_okClicked;
+	BOOL m_bearbeiten;
 	afx_msg void OnBnClickedOk();
+	virtual BOOL OnInitDialog();
 };

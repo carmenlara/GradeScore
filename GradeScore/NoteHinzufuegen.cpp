@@ -55,6 +55,7 @@ BOOL CNoteHinzufuegen::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
+	m_gewichtungOK = FALSE;
 	if (m_bearbeiten)
 	{
 		SetWindowTextA("Note bearbeiten");
@@ -67,8 +68,10 @@ BOOL CNoteHinzufuegen::OnInitDialog()
 
 void CNoteHinzufuegen::OnKillfocusEditGewichtung()
 {
+	UpdateData(TRUE);
 	if (m_gewichtung != "")
 	{
+		m_gewichtungOK = FALSE;
 		string gwt = (string)m_gewichtung;
 		int digit = 0;
 		if ((gwt.find(".") != std::string::npos) && (gwt.find(",") != std::string::npos))
@@ -99,7 +102,7 @@ void CNoteHinzufuegen::OnKillfocusEditGewichtung()
 
 void CNoteHinzufuegen::OnBnClickedOk()
 {
-	if (!m_gewichtungOK)
+	if (m_gewichtungOK)
 	{
 		m_okClicked = TRUE;
 		CDialogEx::OnOK();

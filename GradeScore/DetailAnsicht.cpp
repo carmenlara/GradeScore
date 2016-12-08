@@ -31,6 +31,7 @@ CDetailAnsicht::~CDetailAnsicht()
 void CDetailAnsicht::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_NOTEN_UEBERSICHT, m_notenList);
 }
 
 
@@ -52,10 +53,10 @@ BOOL CDetailAnsicht::OnInitDialog()
 	CImageList il;
 
 	// Tabellenraster
-	m_notenList.InsertColumn(0, _T("Note"), LVCFMT_LEFT, 80);
-	m_notenList.InsertColumn(1, _T("Gewichtung"), LVCFMT_LEFT, 80);
-	m_notenList.InsertColumn(2, _T("Datum"), LVCFMT_LEFT, 80);
-	m_notenList.InsertColumn(3, _T("Beschriftung"), LVCFMT_LEFT, 150);
+	m_notenList.InsertColumn(0, "Note", LVCFMT_LEFT, 80);
+	m_notenList.InsertColumn(1, "Gewichtung", LVCFMT_LEFT, 80);
+	m_notenList.InsertColumn(2, "Datum", LVCFMT_LEFT, 80);
+	m_notenList.InsertColumn(3, "Beschriftung", LVCFMT_LEFT, 150);
 	this->m_notenList.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES | LVS_EX_ONECLICKACTIVATE
 		| LVS_EX_AUTOSIZECOLUMNS | LVS_EX_JUSTIFYCOLUMNS);
 
@@ -72,10 +73,10 @@ BOOL CDetailAnsicht::OnInitDialog()
 void CDetailAnsicht::LoadData()
 {
 	CRecordset *rec = new CRecordset(m_db);
-	CString id, beschriftung, note, datum, gewichtung, query, semester;
+	CString id, beschriftung, note, datum, gewichtung, query;
 	int i = 0;
 	id.Format("%d", m_fachid);
-	query = "SELECT * FROM fach WHERE fk_fach_id = " + id;
+	query = "SELECT * FROM note WHERE fk_fach_id = " + id;
 	m_notenList.DeleteAllItems();
 	rec->Open(CRecordset::snapshot, query, NULL);
 	while (!rec->IsEOF())
@@ -86,10 +87,10 @@ void CDetailAnsicht::LoadData()
 		rec->GetFieldValue("date", datum);
 		rec->GetFieldValue("gewichtung", gewichtung);
 
-		m_notenList.InsertItem(i, beschriftung);
-		m_notenList.SetItemText(i, 1, datum);
-		m_notenList.SetItemText(i, 2, semester);
-		m_notenList.SetItemText(i, 3, gewichtung);
+		m_notenList.InsertItem(i, note);
+		m_notenList.SetItemText(i, 1, gewichtung);
+		m_notenList.SetItemText(i, 2, datum);
+		m_notenList.SetItemText(i, 3, beschriftung);
 		m_notenList.SetItemData(i, (DWORD)_ttoi(id));
 		i++;
 		rec->MoveNext();
@@ -143,22 +144,25 @@ void CDetailAnsicht::OnBnClickedNoteBearbeiten()
 
 		if (dlg.DoModal())
 		{
-			if (dlg.m_note != NULL || dlg.m_note != 0.0)
+			if (dlg.m_okClicked)
 			{
-				try
+				if (dlg.m_note != NULL || dlg.m_note != 0.0)
 				{
-					note.Format("%f", dlg.m_note);
-					m_db->ExecuteSQL("Update fach SET note = '" + note + "', gewichtung = " + dlg.m_gewichtung + ", date = '" + dlg.m_dateCTime.Format("%d.%m.%Y") + "', beschriftung = '" + dlg.m_beschriftung + "' WHERE fach_id = " + id);
+					try
+					{
+						note.Format("%f", dlg.m_note);
+						m_db->ExecuteSQL("Update fach SET note = '" + note + "', gewichtung = " + dlg.m_gewichtung + ", date = '" + dlg.m_dateCTime.Format("%d.%m.%Y") + "', beschriftung = '" + dlg.m_beschriftung + "' WHERE fach_id = " + id);
+					}
+					catch (CDBException *e)
+					{
+						AfxMessageBox("Die Note konnte nicht bearbeitet werden.");
+					}
 				}
-				catch (CDBException *e)
+				else
 				{
-					AfxMessageBox("Die Note konnte nicht bearbeitet werden.");
+					AfxMessageBox("Bitte geben Sie eine Note ein.");
+					OnBnClickedNoteBearbeiten();
 				}
-			}
-			else
-			{
-				AfxMessageBox("Bitte geben Sie eine Note ein.");
-				OnBnClickedNoteBearbeiten();
 			}
 		}
 	}
@@ -174,9 +178,13 @@ void CDetailAnsicht::OnBnClickedNoteEntfernen()
 	CString id;
 	if (m_listLine != -1)
 	{
-		id.Format("%d", m_notenList.GetItemData(m_listLine));
-		m_db->ExecuteSQL("DELETE FROM note WHERE note_id = " + id);
-		m_notenList.DeleteItem(m_listLine);
+		const int result = MessageBox("Möchten Sie die Note wirklich löschen?", "Note Löschen", MB_YESNO);
+		if (result == IDYES)
+		{
+			id.Format("%d", m_notenList.GetItemData(m_listLine));
+			m_db->ExecuteSQL("DELETE FROM note WHERE note_id = " + id);
+			m_notenList.DeleteItem(m_listLine);
+		}
 	}
 	else
 	{

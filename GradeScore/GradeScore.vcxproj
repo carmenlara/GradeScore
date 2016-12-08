@@ -199,7 +199,6 @@
     <ClInclude Include="GradeScore.h" />
     <ClInclude Include="GradeScoreDoc.h" />
     <ClInclude Include="GradeScoreView.h" />
-    <ClInclude Include="Grafik.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="MenuDlg.h" />
     <ClInclude Include="NoteHinzufuegen.h" />
@@ -214,7 +213,6 @@
     <ClCompile Include="GradeScore.cpp" />
     <ClCompile Include="GradeScoreDoc.cpp" />
     <ClCompile Include="GradeScoreView.cpp" />
-    <ClCompile Include="Grafik.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="MenuDlg.cpp" />
     <ClCompile Include="NoteHinzufuegen.cpp" />
