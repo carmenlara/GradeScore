@@ -6,6 +6,8 @@
 #include "AddSemester.h"
 #include "afxdialogex.h"
 
+#include <time.h>
+
 
 // CAddSemester-Dialogfeld
 
@@ -14,7 +16,8 @@ IMPLEMENT_DYNAMIC(CAddSemester, CDialogEx)
 CAddSemester::CAddSemester(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_SEMESTER_ADD, pParent)
 	, m_beschriftung(_T(""))
-	, m_jahr(0)
+	, m_jahr(CTime(time(0)).GetYear())
+	, m_semesterNr(0)
 {
 	m_okClicked = FALSE;
 }
@@ -30,6 +33,8 @@ void CAddSemester::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_JAHR, m_jahr);
 	DDV_MinMaxInt(pDX, m_jahr, 1900, 3000);
 	DDX_Control(pDX, IDC_SEMESTER, m_semester);
+
+	m_semester.SetCurSel(0);
 }
 
 
