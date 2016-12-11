@@ -8,6 +8,7 @@
 
 #include <string>
 #include <algorithm>
+#include <time.h>
 
 using namespace std;
 
@@ -17,7 +18,7 @@ IMPLEMENT_DYNAMIC(CNoteHinzufuegen, CDialogEx)
 
 CNoteHinzufuegen::CNoteHinzufuegen(CWnd* pParent /*=NULL*/)
 	: CDialogEx(IDD_NOTE_HINZUFUEGEN, pParent)
-	, m_dateCTime(0)
+	, m_dateCTime(time(0))
 	, m_beschriftung(_T(""))
 	, m_note(0)
 	, m_gewichtung(_T(""))

@@ -142,13 +142,23 @@ void CDetailAnsicht::OnBnClickedNoteHinzufuegen()
 void CDetailAnsicht::OnBnClickedNoteBearbeiten()
 {
 	CNoteHinzufuegen dlg;
-	string date;
-	CString id, note;
+	CString id, note, stringDate;
 	if (m_listLine != -1)
 	{
 		id.Format("%d", m_notenList.GetItemData(m_listLine));
 		dlg.m_bearbeiten = TRUE;
 		dlg.m_note = atof(m_notenList.GetItemText(m_listLine, 0));
+		dlg.m_gewichtung = m_notenList.GetItemText(m_listLine, 1);
+		dlg.m_beschriftung = m_notenList.GetItemText(m_listLine, 3);
+
+		// string to date conversion
+		DATE date;
+		stringDate = m_notenList.GetItemText(m_listLine, 2);
+		COleDateTime myDtTime;
+		myDtTime.ParseDateTime(stringDate);
+		SYSTEMTIME sDate;
+		myDtTime.GetAsSystemTime(sDate);
+		dlg.m_dateCTime = sDate;
 
 		if (dlg.DoModal())
 		{
@@ -159,11 +169,12 @@ void CDetailAnsicht::OnBnClickedNoteBearbeiten()
 					try
 					{
 						note.Format("%f", dlg.m_note);
-						m_db->ExecuteSQL("Update fach SET note = '" + note + "', gewichtung = " + dlg.m_gewichtung + ", date = '" + dlg.m_dateCTime.Format("%d.%m.%Y") + "', beschriftung = '" + dlg.m_beschriftung + "' WHERE fach_id = " + id);
+						m_db->ExecuteSQL("Update note SET note = " + note + ", gewichtung = " + dlg.m_gewichtung + ", date = '" + dlg.m_dateCTime.Format("%d.%m.%Y") + "', beschriftung = '" + dlg.m_beschriftung + "' WHERE note_id = " + id);
+						LoadData();
 					}
 					catch (CDBException *e)
 					{
-						AfxMessageBox("Die Note konnte nicht bearbeitet werden.");
+						AfxMessageBox("Die Note konnte nicht bearbeitet werden. \n" + e->m_strError);
 					}
 				}
 				else
@@ -192,6 +203,7 @@ void CDetailAnsicht::OnBnClickedNoteEntfernen()
 			id.Format("%d", m_notenList.GetItemData(m_listLine));
 			m_db->ExecuteSQL("DELETE FROM note WHERE note_id = " + id);
 			m_notenList.DeleteItem(m_listLine);
+			m_listLine = -1;
 		}
 	}
 	else
