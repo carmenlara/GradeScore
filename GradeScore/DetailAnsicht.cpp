@@ -75,6 +75,7 @@ void CDetailAnsicht::LoadData()
 	CRecordset *rec = new CRecordset(m_db);
 	CString id, beschriftung, note, datum, gewichtung, query;
 	int i = 0;
+	std::string noteCut;
 	id.Format("%d", m_fachid);
 	query = "SELECT * FROM note WHERE fk_fach_id = " + id;
 	m_notenList.DeleteAllItems();
@@ -86,6 +87,13 @@ void CDetailAnsicht::LoadData()
 		rec->GetFieldValue("note", note);
 		rec->GetFieldValue("date", datum);
 		rec->GetFieldValue("gewichtung", gewichtung);
+
+		double noteD = atof(note);
+		int noteGerundet = (int)(noteD * 10);
+		note.Format("%d", noteGerundet);
+		noteCut = (string)note;
+		noteCut = noteCut.substr(0, 1) + "." + noteCut.substr(1, 1);
+		note = noteCut.c_str();
 
 		m_notenList.InsertItem(i, note);
 		m_notenList.SetItemText(i, 1, gewichtung);
