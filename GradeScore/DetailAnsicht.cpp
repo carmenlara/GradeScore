@@ -121,12 +121,23 @@ void CDetailAnsicht::OnBnClickedNoteHinzufuegen()
 				fachid.Format("%d", m_fachid);
 				try
 				{
-					m_db->ExecuteSQL("INSERT INTO note (note, gewichtung, date, beschriftung, fk_fach_id) VALUES (" + note + ", " + dlg.m_gewichtung + ", '" + dlg.m_dateCTime.Format("%d.%m.%Y") + "', '" + dlg.m_beschriftung + "', " + fachid + ")");
+					string sql;
+					sql = "INSERT INTO note (note";
+					sql += dlg.m_gewichtung == "" ? "" : ", gewichtung";
+					sql += ", date";
+					sql += dlg.m_beschriftung == "" ? "" : ", beschriftung";
+					sql += ", fk_fach_id) VALUES(" + note;
+					sql += dlg.m_gewichtung == "" ? "" : ", " + dlg.m_gewichtung;
+					sql += ", '" + dlg.m_dateCTime.Format("%d.%m.%Y") + "'";
+					sql += dlg.m_beschriftung == "" ? "" : ", '" + dlg.m_beschriftung + "'";
+					sql += ", " + fachid + ")";
+
+					m_db->ExecuteSQL(sql.c_str());
 					LoadData();
 				}
 				catch (CDBException *e)
 				{
-					AfxMessageBox("Die Note konnte nicht hinzugefügt werden.");
+					AfxMessageBox("Die Note konnte nicht hinzugefügt werden. \n" + e->m_strError);
 				}
 			}
 			else
@@ -169,7 +180,12 @@ void CDetailAnsicht::OnBnClickedNoteBearbeiten()
 					try
 					{
 						note.Format("%f", dlg.m_note);
-						m_db->ExecuteSQL("Update note SET note = " + note + ", gewichtung = " + dlg.m_gewichtung + ", date = '" + dlg.m_dateCTime.Format("%d.%m.%Y") + "', beschriftung = '" + dlg.m_beschriftung + "' WHERE note_id = " + id);
+						string sql = "Update note SET note = " + note;
+						sql += dlg.m_gewichtung == "" ? "" : ", gewichtung = " + dlg.m_gewichtung;
+						sql += ", date = '" + dlg.m_dateCTime.Format("%d.%m.%Y") + "'";
+						sql += dlg.m_beschriftung == "" ? "" : ", beschriftung = '" + dlg.m_beschriftung + "'";
+						sql += " WHERE note_id = " + id;
+						m_db->ExecuteSQL(sql.c_str());
 						LoadData();
 					}
 					catch (CDBException *e)

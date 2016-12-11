@@ -13,6 +13,8 @@
 #include <map>
 #include <stdlib.h>
 
+#include <iostream>
+
 using namespace std;
 
 extern CDatabase *m_db;
@@ -95,7 +97,7 @@ void CMenuDlg::ShowInfo()
 	{
 		gesamtnote = gesamtnote / i;
 		gesamtnote = (double)((int)(gesamtnote * 100)) / 100;
-		gesamtnoteStr.Format("%f", gesamtnote);
+		gesamtnoteStr.Format("%.1f", gesamtnote);
 	}
 	else
 	{
@@ -139,21 +141,21 @@ void CMenuDlg::NotenHolen()
 {
 	CRecordset *rec = new CRecordset(m_db);
 	CString noteStr, gewichtungStr;
-	int i = 0;
-	int fachid = 0;
+	int fachIdx = 0;
+	int notenIdx = 0;
 	m_noten.clear();
-	for (i = 0; i < m_faecher.size(); i++)
+	for (fachIdx = 0; fachIdx < m_faecher.size(); ++fachIdx)
 	{
-		m_noten.clear();
-		rec->Open(CRecordset::snapshot, "SELECT * FROM note WHERE note.\"fk_fach_id\" = " + m_faecher [i] ["id"], NULL);
+		rec->Open(CRecordset::snapshot, "SELECT * FROM note WHERE note.\"fk_fach_id\" = " + m_faecher [fachIdx] ["id"], NULL);
 		while (!rec->IsEOF())
 		{
 			rec->GetFieldValue("note", noteStr);
 			rec->GetFieldValue("gewichtung", gewichtungStr);
-			m_noten[i]["fachid"] = m_faecher[i]["id"];
-			m_noten[i]["note"] = noteStr;
-			m_noten[i]["gewichtung"] = gewichtungStr;
+			m_noten[notenIdx]["fachid"] = m_faecher[fachIdx]["id"];
+			m_noten[notenIdx]["note"] = noteStr;
+			m_noten[notenIdx]["gewichtung"] = gewichtungStr;
 			rec->MoveNext();
+			++notenIdx;
 		}
 		rec->Close();
 	}
@@ -169,11 +171,11 @@ void CMenuDlg::LoadListCtrl()
 	for (i = 0; i < m_faecher.size(); i++)
 	{
 		note = GesamtnoteBerechnen(_ttoi(m_faecher[i]["id"]));
-		noteStr.Format("%d", note);
-		notegerundetStr.Format("%d", (int)note);
+		noteStr.Format("%.2f", note);
+		notegerundetStr.Format("%.2f", round(note * 2.0)/2.0);
 		m_fachList.InsertItem(i, m_faecher[i]["fach"]);
 		m_fachList.SetItemText(i, 1, noteStr);
-		m_fachList.SetItemText(i, 1, notegerundetStr);
+		m_fachList.SetItemText(i, 2, notegerundetStr);
 		m_fachList.SetItemData(i, (DWORD)_ttoi(m_faecher[i]["id"]));
 	}
 	UpdateData(FALSE);
@@ -192,6 +194,8 @@ double CMenuDlg::GesamtnoteBerechnen(int fachid)
 		double Gewichtung;
 	};
 
+	NotenHolen();
+
 	vector<SNote> vecNoten;
 	fachidStr.Format("%d", fachid);
 	for (int i = 0; i < m_noten.size(); ++i)
@@ -201,9 +205,9 @@ double CMenuDlg::GesamtnoteBerechnen(int fachid)
 			SNote xNote;
 			xNote.Note = atof(m_noten[i]["note"]);
 			xNote.Gewichtung = -1.0;
-			if (!m_noten[i]["Gewichtung"].IsEmpty())
+			if (!m_noten[i]["gewichtung"].IsEmpty())
 			{
-				xNote.Gewichtung = atof(m_noten[i]["Gewichtung"]) / 100.0;
+				xNote.Gewichtung = atof(m_noten[i]["gewichtung"]) / 100.0;
 				dGesamtGewichtung += xNote.Gewichtung;
 			}
 			else
@@ -230,14 +234,7 @@ double CMenuDlg::GesamtnoteBerechnen(int fachid)
 		dRet += vecNoten[i].Gewichtung * vecNoten[i].Note / dGesamtGewichtung;
 	}
 
-	if (dRet == 0)
-	{
-		return 0;
-	}
-	else
-	{
-		return dRet / vecNoten.size();
-	}	
+	return dRet;
 }
 
 
@@ -279,6 +276,7 @@ void CMenuDlg::OnBnClickedFachHinzufuegen()
 					FaecherHolen();
 					NotenHolen();
 					LoadListCtrl();
+					ShowInfo();
 				}
 				catch (CDBException *e)
 				{
@@ -342,11 +340,13 @@ void CMenuDlg::OnBnClickedFachAuswaehlen()
 		dlg.m_fachid = m_fachList.GetItemData(m_listLine);
 		if (dlg.DoModal())
 		{
-			FaecherHolen();
-			NotenHolen();
-			LoadListCtrl();
-			ShowInfo();
+
 		}
+
+		FaecherHolen();
+		NotenHolen();
+		LoadListCtrl();
+		ShowInfo();
 	}
 	else
 	{

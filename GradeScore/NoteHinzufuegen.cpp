@@ -24,7 +24,7 @@ CNoteHinzufuegen::CNoteHinzufuegen(CWnd* pParent /*=NULL*/)
 	, m_gewichtung(_T(""))
 {
 	m_okClicked = FALSE;
-	m_gewichtungOK = FALSE;
+	m_gewichtungOK = TRUE;
 	m_bearbeiten = FALSE;
 }
 
@@ -56,7 +56,6 @@ BOOL CNoteHinzufuegen::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	m_gewichtungOK = FALSE;
 	if (m_bearbeiten)
 	{
 		SetWindowTextA("Note bearbeiten");
