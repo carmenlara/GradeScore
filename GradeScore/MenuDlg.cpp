@@ -87,13 +87,13 @@ void CMenuDlg::ShowInfo()
 	double gesamtnote = 0;
 	int i = 0;
 	// Gesamtnote berechnen und Info ausgeben
-	for (i = 0; i < m_fachList.GetItemCount (); i++)
+	for (i = 0; i < m_faecher.size(); i++)
 	{
-		gesamtnote += atof (m_fachList.GetItemText(i, 1));
+		gesamtnote += GesamtnoteBerechnen(_ttoi(m_faecher[i]["id"]));
 	}
-	if (gesamtnote != 0)
+	if (m_faecher.size() != 0)
 	{
-		gesamtnote = gesamtnote / i;
+		gesamtnote = gesamtnote / m_faecher.size();
 		gesamtnote = (double)((int)(gesamtnote * 100)) / 100;
 		gesamtnoteStr.Format("%f", gesamtnote);
 	}
@@ -230,14 +230,7 @@ double CMenuDlg::GesamtnoteBerechnen(int fachid)
 		dRet += vecNoten[i].Gewichtung * vecNoten[i].Note / dGesamtGewichtung;
 	}
 
-	if (dRet == 0)
-	{
-		return 0;
-	}
-	else
-	{
-		return dRet / vecNoten.size();
-	}	
+	return dRet / vecNoten.size();
 }
 
 
