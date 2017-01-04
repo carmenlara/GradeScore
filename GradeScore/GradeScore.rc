@@ -48,6 +48,10 @@ IDR_MAINFRAME           BITMAP                  "res\\Toolbar.bmp"
 // Toolbar
 //
 
+IDR_MAINFRAME TOOLBAR 16, 15
+BEGIN
+    BUTTON      ID_BUTTON32771
+END
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -59,22 +63,7 @@ IDR_MAINFRAME MENU
 BEGIN
     POPUP "&Datei"
     BEGIN
-        MENUITEM "&Neu\tStrg+N",                ID_FILE_NEW
-        MENUITEM "Ö&ffnen...\tStrg+O",          ID_FILE_OPEN
-        MENUITEM "&Speichern\tStrg+S",          ID_FILE_SAVE
-        MENUITEM "Speichern &unter...",         ID_FILE_SAVE_AS
-        MENUITEM SEPARATOR
-        MENUITEM "Zuletzt verwendete Datei",    ID_FILE_MRU_FILE1, GRAYED
-        MENUITEM SEPARATOR
         MENUITEM "&Beenden",                    ID_APP_EXIT
-    END
-    POPUP "&Bearbeiten"
-    BEGIN
-        MENUITEM "&Rückgängig\tStrg+Z",         ID_EDIT_UNDO
-        MENUITEM SEPARATOR
-        MENUITEM "&Ausschneiden\tStrg+X",       ID_EDIT_CUT
-        MENUITEM "&Kopieren\tStrg+C",           ID_EDIT_COPY
-        MENUITEM "&Einfügen\tStrg+V",           ID_EDIT_PASTE
     END
     POPUP "&Ansicht"
     BEGIN
