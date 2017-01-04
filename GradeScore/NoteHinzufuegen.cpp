@@ -58,6 +58,7 @@ BOOL CNoteHinzufuegen::OnInitDialog()
 
 	if (m_bearbeiten)
 	{
+		// Anzeigetext des Dialoges ändern
 		SetWindowTextA("Note bearbeiten");
 	}
 
@@ -65,23 +66,23 @@ BOOL CNoteHinzufuegen::OnInitDialog()
 				  // AUSNAHME: OCX-Eigenschaftenseite muss FALSE zurückgeben.
 }
 
-
+// Killfocus des Feldes Gewichtung
 void CNoteHinzufuegen::OnKillfocusEditGewichtung()
 {
 	UpdateData(TRUE);
-	if (m_gewichtung != "")
+	if (m_gewichtung != "") // Wurde eine Gewichtung eingegeben?
 	{
 		m_gewichtungOK = FALSE;
 		string gwt = (string)m_gewichtung;
 		int digit = 0;
 		if ((gwt.find(".") != std::string::npos) && (gwt.find(",") != std::string::npos))
 		{
-			// Contains "."
+			// Enthält "."
 			AfxMessageBox("Bitte geben Sie eine ganze Zahl ohne Sonderzeichen ein.");
 		}
 		else
 		{
-			// Does not contain "."
+			// Enthält nicht "."
 			digit = _ttoi(m_gewichtung);
 			if (digit < 0 || digit > 100)
 			{
@@ -99,12 +100,16 @@ void CNoteHinzufuegen::OnKillfocusEditGewichtung()
 	}
 }
 
-
+// Button "OK"
 void CNoteHinzufuegen::OnBnClickedOk()
 {
-	if (m_gewichtungOK)
+	if (m_gewichtungOK) // ist die gewichtung OK?
 	{
 		m_okClicked = TRUE;
 		CDialogEx::OnOK();
+	}
+	else
+	{
+		AfxMessageBox("Bitte überprüfen Sie Ihre Gewichtung der Note.");
 	}
 }

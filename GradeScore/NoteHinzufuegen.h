@@ -22,6 +22,7 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
+	// Variablen
 	double m_note;
 	CTime m_dateCTime;
 	CString m_beschriftung;
@@ -29,6 +30,8 @@ public:
 	BOOL m_okClicked;
 	BOOL m_gewichtungOK;
 	BOOL m_bearbeiten;
+	
+	// Methoden
 	afx_msg void OnBnClickedOk();
 	afx_msg void OnKillfocusEditGewichtung();
 	virtual BOOL OnInitDialog();

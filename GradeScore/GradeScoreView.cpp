@@ -76,16 +76,18 @@ void CGradeScoreView::OnInitialUpdate()
 	m_db = new CDatabase();
 	m_db->OpenEx("DSN=GradeScore;SERVER=localhost;UID=postgres;PWD={As2016sql_5};", FALSE);
 	
-	// Tabellenraster
+	// Tabellenraster erstellen
 	m_overview.InsertColumn(0, _T("Beschriftung"), LVCFMT_LEFT, 400);
 	m_overview.InsertColumn(1, _T("Jahr"), LVCFMT_LEFT, 80);
 	m_overview.InsertColumn(2, _T("Semester"), LVCFMT_LEFT, 150);
 	this->m_overview.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES | LVS_EX_ONECLICKACTIVATE
 		| LVS_EX_AUTOSIZECOLUMNS | LVS_EX_JUSTIFYCOLUMNS);
 
+	// Zeilenhöhe definieren
 	il.Create(1, 25, ILC_COLOR, 1, 1);
 	m_overview.SetImageList(&il, LVSIL_SMALL);
 
+	// Daten in Tabelle laden
 	LoadDBInList();
 }
 
@@ -113,30 +115,35 @@ CGradeScoreDoc* CGradeScoreView::GetDocument() const // Nichtdebugversion ist in
 
 // CGradeScoreView-Meldungshandler
 
-
+// Daten in Tabelle laden
 void CGradeScoreView::LoadDBInList()
 {
 	CRecordset *rec = new CRecordset (m_db);
 	CString id, beschriftung, jahr, semester, query;
 	int i = 0;
-	query = "SELECT * FROM semester;";
+	query = "SELECT * FROM semester ORDER BY sem_id;";
+	// Tabelle löschen
 	m_overview.DeleteAllItems();
+	// Tabelle in DB öffnen
 	rec->Open(CRecordset::snapshot, query, NULL);
 	while (!rec->IsEOF ())
 	{
+		// Daten des aktuellen Datensatzes speichern
 		rec->GetFieldValue("sem_id", id);
 		rec->GetFieldValue("beschriftung", beschriftung);
 		rec->GetFieldValue("jahr", jahr);
 		rec->GetFieldValue("semester", semester);
 
+		// Daten in Tabelle ausgeben
 		m_overview.InsertItem(i, beschriftung);
 		m_overview.SetItemText(i, 1, jahr);
 		m_overview.SetItemText(i, 2, semester);
 		m_overview.SetItemData(i, (DWORD)_ttoi(id));
 		i++;
+		// Zu nächsten Datensatz wechseln
 		rec->MoveNext();
 	}
-	rec->Close();
+	rec->Close(); // Tabelle schliessen
 }
 
 
@@ -154,7 +161,7 @@ void CGradeScoreView::OnNMClickOverview(NMHDR *pNMHDR, LRESULT *pResult)
 void CGradeScoreView::OnNMDblclkOverview(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
-	OnBnClickedSelectSemester();
+	SemesterBearbeiten();
 	*pResult = 0;
 }
 
@@ -187,6 +194,53 @@ void CGradeScoreView::OnBnClickedAddSemester()
 				MessageBox("Das Semester konnte nicht erfasst werden.", "Error", MB_ICONERROR);
 			}
 		}
+	}
+}
+
+
+// Semester bearbeiten
+void CGradeScoreView::SemesterBearbeiten()
+{
+	CAddSemester dlg;
+	CString query, semester, jahr, id;
+	dlg.m_bearbeiten = TRUE;
+	if (m_selectedLine != -1)
+	{
+		// Daten in neuen Dialog laden
+		id.Format("%d", m_overview.GetItemData(m_selectedLine));
+		dlg.m_beschriftung = m_overview.GetItemText(m_selectedLine, 0);
+		dlg.m_jahr = _ttoi (m_overview.GetItemText(m_selectedLine, 1));
+		dlg.m_semesterNr = _ttoi (m_overview.GetItemText(m_selectedLine, 2));
+		if (dlg.DoModal()) // Dialog öffnen
+		{
+			if (dlg.m_okClicked)
+			{
+				jahr.Format("%d", dlg.m_jahr);
+				if (dlg.m_semesterNr == 0)
+				{
+					semester = "1";
+				}
+				else
+				{
+					semester = "2";
+				}
+				try
+				{
+					// Datensatz in DB updaten
+					m_db->ExecuteSQL("UPDATE semester SET beschriftung = '" + dlg.m_beschriftung + "', jahr = " + jahr + ", semester = " + semester + " WHERE sem_id = " + id);
+					// Datensatz in Tabelle updaten
+					LoadDBInList();
+				}
+				catch (CDBException *e)
+				{
+					MessageBox("Das Semester konnte nicht bearbeitet werden.", "Error", MB_ICONERROR);
+				}
+			}
+		}
+	}
+	else
+	{
+		AfxMessageBox("Bitte wählen Sie vorher ein Semester aus.");
 	}
 }
 
@@ -251,7 +305,7 @@ void CGradeScoreView::OnBnClickedSelectSemester()
 	}
 }
 
-
+// Fenster schliessen
 BOOL CGradeScoreView::DestroyWindow()
 {
 	m_db->Close();

@@ -27,7 +27,9 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
+	// Tabelle
 	CListCtrl m_fachList;
+	// Variablen
 	CString m_info;
 	CString m_idSemester;
 	CString m_beschriftung;
@@ -35,10 +37,12 @@ public:
 	CString m_semester;
 	int m_listLine;
 
+	// Vektoren
 	std::map <int, std::map <CString, CString>> m_faecher;
 	std::map <int, std::map <CString, CString>> m_noten;
 	std::map <CString, double> m_fachNoten;
 
+	// Methoden
 	afx_msg double GesamtnoteBerechnen(int fachid);
 	afx_msg void FaecherHolen();
 	afx_msg void NotenHolen();
@@ -51,7 +55,6 @@ public:
 	afx_msg void OnBnClickedSemesterWechseln();
 	afx_msg void OnBnClickedFachHinzufuegen();
 	afx_msg void OnBnClickedFachEntfernen();
-	afx_msg void OnBnClickedGrafischeAnsicht();
 	afx_msg void OnBnClickedFachAuswaehlen();
 	afx_msg void OnBnClickedFachBearbeiten();
 };

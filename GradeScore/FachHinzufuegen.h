@@ -21,9 +21,12 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
+	// Variablen
 	CString m_fachname;
 	BOOL m_okClicked;
 	BOOL m_bearbeiten;
+	
+	// Methoden
 	afx_msg void OnBnClickedOk();
 	virtual BOOL OnInitDialog();
 };

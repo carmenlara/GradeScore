@@ -21,11 +21,17 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-	CString m_beschriftung;
+	// ComboBox
 	CComboBox m_semester;
+	// Variablen
+	CString m_beschriftung;
 	int m_jahr;
 	int m_semesterNr;
 	BOOL m_okClicked;
+	BOOL m_bearbeiten;
+
+	// Methoden
 	afx_msg void OnBnClickedOk();
 	afx_msg void OnSelchangeSemester();
+	virtual BOOL OnInitDialog();
 };

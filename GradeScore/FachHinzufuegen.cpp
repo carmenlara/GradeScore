@@ -45,6 +45,7 @@ BOOL CFachHinzufuegen::OnInitDialog()
 	m_okClicked = FALSE;
 	if (m_bearbeiten)
 	{
+		// Anzeigetext des Dialoges ändern
 		SetWindowTextA("Fach bearbeiten");
 	}
 
@@ -52,7 +53,7 @@ BOOL CFachHinzufuegen::OnInitDialog()
 				  // AUSNAHME: OCX-Eigenschaftenseite muss FALSE zurückgeben.
 }
 
-
+// Button "OK"
 void CFachHinzufuegen::OnBnClickedOk()
 {
 	m_okClicked = TRUE;

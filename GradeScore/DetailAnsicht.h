@@ -27,9 +27,13 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
+	// Tabelle
+	CListCtrl m_notenList;
+	// Variablen
 	int m_fachid;
 	int m_listLine;
-	CListCtrl m_notenList;
+
+	// Methoden
 	afx_msg void OnBnClickedNoteHinzufuegen();
 	afx_msg void OnBnClickedNoteEntfernen();
 	virtual BOOL OnInitDialog();

@@ -54,7 +54,8 @@ public:
 	// Hilfsmethoden
 	afx_msg void LoadDBInList();
 
-	// Events
+	// Methoden
+	afx_msg void SemesterBearbeiten();
 	afx_msg void OnNMClickOverview(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnNMDblclkOverview(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnBnClickedAddSemester();

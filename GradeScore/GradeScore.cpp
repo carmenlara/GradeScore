@@ -11,6 +11,7 @@
 #include "GradeScoreDoc.h"
 #include "GradeScoreView.h"
 
+// Deklaration der globalen CDatabase Variable, die überall genutzt werden kann
 CDatabase *m_db;
 
 #ifdef _DEBUG
